@@ -1,5 +1,5 @@
-import { Genre } from "./genre.enum"
-import { TUser } from "./user.type";
+import { Genre } from './genre.enum';
+import { TUser } from './user.type';
 
 export type TMovie = {
     title: string;
