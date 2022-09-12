@@ -1,4 +1,5 @@
 import { CliCommandInterface } from '../cli-command/cli-command.inteface';
+import { Command } from '../types/command.enum';
 
 type ParsedCommand = {
   [key: string]: string[]
@@ -6,7 +7,7 @@ type ParsedCommand = {
 
 export default class CLIApplication {
   private commands: {[propertyName: string]: CliCommandInterface} = {};
-  private defaultCommand = '--help';
+  private defaultCommand = Command.Help;
 
   private parseCommand(cliArguments: string[]): ParsedCommand {
     const parsedCommand: ParsedCommand = {};
@@ -25,8 +26,8 @@ export default class CLIApplication {
   }
 
   public registerCommands(commandList: CliCommandInterface[]): void {
-    this.commands = commandList.reduce((acc, Command) => {
-      const cliCommand = Command;
+    this.commands = commandList.reduce((acc, command) => {
+      const cliCommand = command;
       acc[cliCommand.name] = cliCommand;
       return acc;
     }, this.commands);
