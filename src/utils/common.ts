@@ -1,5 +1,5 @@
-import { Genre } from '../types/genre.enum';
-import { TMovie } from '../types/movie.type';
+import { Genre } from '../types/genre.enum.js';
+import { TMovie } from '../types/movie.type.js';
 
 export const createMovie = (row: string) => {
   const tokens = row.replace('\n', '').split('\t');

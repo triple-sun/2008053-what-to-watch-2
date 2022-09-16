@@ -36,7 +36,6 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "dayjs": "^1.11.5",
-    "fs": "^0.0.1-security",
     "got": "^12.4.1",
     "json-server": "^0.17.0"
   }

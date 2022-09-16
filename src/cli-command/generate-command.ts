@@ -2,7 +2,7 @@ import { TMockData } from '../types/mock-data.type.js';
 import { CliCommandInterface } from './cli-command.inteface.js';
 import got from 'got';
 import MovieGenerator from '../common/movie-generator/movie-generator.js';
-import chalk from 'chalk/index.js';
+import chalk from 'chalk';
 import TSVFileWriter from '../common/file-writer/tsv-file-writer.js';
 import { Command } from '../types/command.enum.js';
 
