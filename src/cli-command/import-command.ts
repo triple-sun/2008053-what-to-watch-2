@@ -1,7 +1,8 @@
 import chalk from 'chalk';
 import TSVFileReader from '../common/file-reader/tsv-file-reader.js';
 import { END, LINE } from '../const/const.js';
-import { Command } from '../types/command.enum.js';
+import { Command } from '../types/enum/command.enum.js';
+import { Message } from '../types/enum/message.enum.js';
 import { createMovie, getErrorMessage } from '../utils/common.js';
 import { CliCommandInterface } from './cli-command.inteface.js';
 
@@ -24,7 +25,7 @@ export default class ImportCommand implements CliCommandInterface {
     try {
       await fileReader.read();
     } catch(err) {
-      console.log(chalk.red(`Can't read the file: ${getErrorMessage(err)}`));
+      console.log(chalk.red(`${Message.FileErr} ${getErrorMessage(err)}`));
     }
   }
 }

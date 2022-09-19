@@ -1,5 +1,5 @@
-import { CliCommandInterface } from '../cli-command/cli-command.inteface.js';
-import { Command } from '../types/command.enum.js';
+import { CliCommandInterface } from '../../cli-command/cli-command.inteface.js';
+import { Command } from '../../types/enum/command.enum.js';
 
 type ParsedCommand = {
   [key: string]: string[]

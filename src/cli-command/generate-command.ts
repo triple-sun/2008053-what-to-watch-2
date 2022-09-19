@@ -4,7 +4,8 @@ import got from 'got';
 import MovieGenerator from '../common/movie-generator/movie-generator.js';
 import chalk from 'chalk';
 import TSVFileWriter from '../common/file-writer/tsv-file-writer.js';
-import { Command } from '../types/command.enum.js';
+import { Command } from '../types/enum/command.enum.js';
+import { Message } from '../types/enum/message.enum.js';
 
 export default class GenerateCommand implements CliCommandInterface {
   public readonly name = Command.Generate;
@@ -17,7 +18,7 @@ export default class GenerateCommand implements CliCommandInterface {
     try {
       this.initialData = await got.get(url).json();
     } catch {
-      return console.log(chalk.red(`Can't fetch data from ${url}.`));
+      return console.log(chalk.red(`${Message.FetchErr} ${url}.`));
     }
 
     const movieGeneratorString = new MovieGenerator(this.initialData);
