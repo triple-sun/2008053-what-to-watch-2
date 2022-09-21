@@ -15,3 +15,6 @@ export const PACKAGE_JSON_URL = '../package.json';
 
 export const END = 'end';
 export const LINE = 'line';
+
+export const CONFIG_PORT_DEFAULT = 4000;
+export const DB_HOST_DEFAULT = '127.0.0.1';

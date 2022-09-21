@@ -1,4 +1,4 @@
-import { Genre } from './genre.enum.js';
+import { Genre } from './enum/genre.enum.js';
 
 export type TMockData = {
   titles: string[];

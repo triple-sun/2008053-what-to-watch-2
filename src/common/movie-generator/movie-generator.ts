@@ -1,4 +1,4 @@
-import { Genre } from '../../types/genre.enum.js';
+import { Genre } from '../../types/enum/genre.enum.js';
 import { TMockData } from '../../types/mock-data.type.js';
 import { generateRandomValue, getRandomItem } from '../../utils/random.js';
 import { MovieGeneratorInterface } from './movie-generator.interface.js';

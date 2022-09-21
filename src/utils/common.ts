@@ -1,4 +1,4 @@
-import { Genre } from '../types/genre.enum.js';
+import { Genre } from '../types/enum/genre.enum.js';
 import { TMovie } from '../types/movie.type.js';
 
 export const createMovie = (row: string) => {
