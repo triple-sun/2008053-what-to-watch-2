@@ -1,0 +1,16 @@
+export enum MinMax {
+  CommentMin = 5,
+  CommentMax = 1024,
+  MovieTitleMin = 2,
+  MovieTitleMax = 100,
+  MovieDescMin = 20,
+  MovieDescMax = 1024,
+  MovieDirectorMin = 2,
+  MovieDirectorMax = 50,
+  RatingMin = 1,
+  RatingMax = 10,
+  UserNameMin = 1,
+  UserNameMax = 15,
+  UserPassMin = 6,
+  UserPassMax = 12,
+}

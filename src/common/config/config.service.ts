@@ -1,9 +1,11 @@
+import { inject, injectable} from 'inversify';
+import { config, DotenvParseOutput } from 'dotenv';
+
 import { LoggerInterface } from '../logger/logger.interface.js';
 import { ConfigInterface } from './config.interface.js';
-import { config, DotenvParseOutput } from 'dotenv';
-import { Message } from '../../types/enum/message.enum.js';
-import { inject, injectable} from 'inversify';
+import { InfoMessage } from '../../types/enum/info-message.enum.js';
 import { Component } from '../../types/component.types.js';
+import { ErrorMessage } from '../../types/enum/error-message.enum.js';
 
 @injectable()
 
@@ -17,11 +19,11 @@ export default class ConfigService implements ConfigInterface {
     const parsedOutput = config();
 
     if (parsedOutput.error) {
-      throw new Error(Message.EnvErr);
+      throw new Error(ErrorMessage.Env);
     }
 
     this.config = <DotenvParseOutput>parsedOutput.parsed;
-    this.logger.info(Message.EnvSuccess);
+    this.logger.info(InfoMessage.EnvSuccess);
   }
 
   public get(key: string): string | undefined {

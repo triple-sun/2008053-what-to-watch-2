@@ -1,8 +1,8 @@
-
 import pino, {Logger} from 'pino';
-import {LoggerInterface} from './logger.interface.js';
 import { injectable } from 'inversify';
-import { Message } from '../../types/enum/message.enum.js';
+
+import { LoggerInterface } from './logger.interface.js';
+import { InfoMessage } from '../../types/enum/info-message.enum.js';
 
 @injectable()
 export default class LoggerService implements LoggerInterface{
@@ -10,7 +10,7 @@ export default class LoggerService implements LoggerInterface{
 
   constructor() {
     this.logger = pino();
-    this.logger.info(Message.Logger);
+    this.logger.info(InfoMessage.Logger);
   }
 
   public debug(message: string, ...args: unknown[]): void {

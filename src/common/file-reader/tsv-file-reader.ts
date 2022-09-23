@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 import { createReadStream } from 'fs';
-import { ENCODING, END, LINE } from '../../const/const.js';
+
+import { RWConfig, HWMark } from '../../types/enum/rw-config.enum.js';
 import { FileReaderInterface } from './file-reader.interface.js';
 
 
@@ -11,8 +12,8 @@ export default class TSVFileReader extends EventEmitter implements FileReaderInt
 
   public async read():Promise<void> {
     const stream = createReadStream(this.filename, {
-      highWaterMark: 16384, // 16KB
-      encoding: ENCODING,
+      highWaterMark: HWMark.Read, // 16KB
+      encoding: RWConfig.Encoding,
     });
 
     let lineRead = '';
@@ -22,15 +23,17 @@ export default class TSVFileReader extends EventEmitter implements FileReaderInt
     for await (const chunk of stream) {
       lineRead += chunk.toString();
 
-      while ((endLinePosition = lineRead.indexOf('\n')) >= 0) {
+      while ((endLinePosition = lineRead.indexOf(RWConfig.EndLine)) >= 0) {
         const completeRow = lineRead.slice(0, endLinePosition + 1);
         lineRead = lineRead.slice(++endLinePosition);
         importedRowCount++;
 
-        this.emit(LINE, completeRow);
+        await new Promise((resolve) => {
+          this.emit(RWConfig.Line, completeRow, resolve);
+        });
       }
     }
 
-    this.emit(END, importedRowCount);
+    this.emit(RWConfig.End, importedRowCount);
   }
 }
