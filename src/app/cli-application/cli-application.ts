@@ -1,4 +1,4 @@
-import { CliCommandInterface } from '../../cli-command/cli-command.inteface.js';
+import { CliCommandInterface } from '../../cli-command/cli-command.interface.js';
 import { Command } from '../../types/enum/command.enum.js';
 
 type ParsedCommand = {

@@ -1,6 +1,6 @@
-
 import { createWriteStream, WriteStream} from 'fs';
-import { ENCODING } from '../../const/const.js';
+
+import { HWMark, RWConfig } from '../../types/enum/rw-config.enum.js';
 import { FileWriterInterface } from './file-writer.interface.js';
 
 export default class TSVFileWriter implements FileWriterInterface {
@@ -8,17 +8,17 @@ export default class TSVFileWriter implements FileWriterInterface {
 
   constructor(public readonly filename: string) {
     this.stream = createWriteStream(this.filename, {
-      flags: 'w',
-      encoding: ENCODING,
-      highWaterMark: 2 ** 16, // 64KB
+      flags: RWConfig.WriteFlags,
+      encoding: RWConfig.Encoding,
+      highWaterMark: HWMark.Write, // 64KB
       autoClose: true,
     });
   }
 
   public async write(row: string): Promise<void> {
-    if (!this.stream.write(`${row}\n`)) {
+    if (!this.stream.write(`${row}${RWConfig.EndLine}`)) {
       return new Promise((resolve) => {
-        this.stream.once('drain', () => resolve());
+        this.stream.once(RWConfig.Drain, () => resolve());
       });
     }
     return Promise.resolve();

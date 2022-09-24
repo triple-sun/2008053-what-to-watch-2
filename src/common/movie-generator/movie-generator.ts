@@ -1,8 +1,9 @@
+import dayjs from 'dayjs';
+
 import { Genre } from '../../types/enum/genre.enum.js';
 import { TMockData } from '../../types/mock-data.type.js';
 import { generateRandomValue, getRandomItem } from '../../utils/random.js';
 import { MovieGeneratorInterface } from './movie-generator.interface.js';
-import dayjs from 'dayjs';
 
 const MIN_YEAR = 2010;
 const MAX_YEAR = 2021;
