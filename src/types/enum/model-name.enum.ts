@@ -1,5 +1,5 @@
 export enum ModelName {
-  Comment = 'Comment',
+  Review = 'Review',
   Movie = 'Movie',
   User = 'User'
 }
