@@ -1,5 +1,5 @@
 export enum FieldName {
-  Comment = 'Comment',
+  Review = 'Review',
   MovieTitle = 'Movie title',
   MovieDesc = 'Movie description',
   MovieDirector = 'Director name',

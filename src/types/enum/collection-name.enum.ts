@@ -1,5 +1,5 @@
 export enum CollectionName {
-  Comments = 'comments',
   Movies = 'movies',
+  Reviews = 'reviews',
   Users = 'users'
 }

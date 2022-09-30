@@ -1,0 +1,442 @@
+openapi: 3.1.0
+info:
+  title: «What to Watch» project server API.
+  description: |-
+    * Routes and resorces list for «What to Watch».
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 2.0.0
+tags:
+  - name: favorites
+    description: favorites operations.
+  - name: movies
+    description: Movies operations.
+  - name: reviews
+    description: Reviews operations.
+  - name: users
+    description: Users operations.
+
+paths:
+  /favorites:
+    get:
+      tags:
+        - favorites
+      summary: Get favorites
+      description: Returns user favorites
+
+      responses:
+        "200":
+          description: Favorites array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/movie'
+        "401":
+          description: You must be authorized to see your favorites.
+
+  /favorites/{movieId}/add:
+    post:
+      tags:
+        - favorites
+      summary: Add favorite
+      description: Adds a specific movie to user favorites
+
+      responses:
+        "200":
+          description: Successfully added to favorites
+        "401":
+          description: You must be authorized to add movies to favorites.
+
+    delete:
+      tags:
+        - favorites
+      summary: Remove favorite
+      description: Removes movie from user favorites
+
+      responses:
+        "200":
+          description: Successfully removed from favorites
+        "401":
+          description: You must be authorized to remove movies from favorites.
+
+  /movies/:
+    get:
+      tags:
+      - movies
+      summary: Get all movies
+      description: Returns all movies array
+      responses:
+        "200":
+          description: Movie array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/movie'
+
+  /movies/promo:
+    get:
+      tags:
+      - movies
+      summary: Get promo movie
+      description: Returns promo movie object
+      responses:
+        "200":
+          description: Promo movie object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/movie'
+
+  /movies/{movieId}:
+    get:
+      tags:
+      - movies
+      summary: Get movie
+      description: Returns specific movie object
+      responses:
+        "200":
+          description: Movie object
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/movie'
+        "401":
+          description: Only authorized users can add, edit or delete movies.
+
+    put:
+      tags:
+      - movies
+      summary: Edit movie
+      description: Edits a specific movie and returns edited movie object
+      responses:
+        "200":
+          description: Edited movie object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/movie'
+        "401":
+          description: Only authorized users can add, edit or delete movies.
+        "409":
+          description: You can only edit or delete movies which you added.
+
+    delete:
+      tags:
+      - movies
+      summary: Delete movie
+      description: Deletes specific movie
+      responses:
+        "200":
+          description: Successfully deleted a movie
+        "401":
+          description: Only authorized users can add, edit or delete movies.
+        "409":
+          description: You can only edit or delete movies which you added.
+
+  /reviews/{movieId}:
+    get:
+      tags:
+        - reviews
+      summary: Get reviews
+      description: Returns comments for a specific movie.
+      responses:
+        "200":
+          description: Review array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/review'
+
+  /reviews/{movieId}/add:
+    post:
+      tags:
+        - reviews
+      summary: Add new review.
+      description: Adds new review for a specific movie.
+
+      requestBody:
+        description: New review data.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/reviewAdd'
+
+      responses:
+        "201":
+          description: Review added successfully. Review object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/review'
+        "401":
+          description: Only authorized users can add reviews.
+
+
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: User registration
+      description: Registers new user.
+
+      requestBody:
+        description: New user registration data.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userCreate'
+        required: true
+
+      responses:
+        "201":
+          description: User successfully registered. User object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "409":
+          description: User with that email already exists.
+
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: User authorization
+      description: Authorizes user using login and password.
+
+      requestBody:
+        description: User credentials.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userAuth'
+        required: true
+
+      responses:
+        "200":
+          description: User authorized successfully. User token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userToken'
+        "400":
+          description: You've entered wrong email or password or user does not exist.
+
+
+    get:
+      tags:
+        - users
+      summary: Checks user authorization
+      description: Returns auhtorized user data.
+      responses:
+        "200":
+          description: User authorized. User object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        "409":
+          description: User not authorized
+
+components:
+  schemas:
+    movieEdit:
+      type: object
+      properties:
+        movieId:
+          type: number
+        movie:
+          $ref: '#/components/schemas/movie'
+
+    movieFull:
+      type: object
+      properties:
+        title:
+          $ref: '#/components/schemas/movieTitle'
+        description:
+          $ref: '#/components/schemas/movieDesc'
+        published:
+          type: string
+          format: date
+        genre:
+          $ref: '#/components/schemas/movieGenre'
+        released:
+          type: number
+        previewVideoLink:
+           type: string
+        videoLink:
+          type: string
+        starring:
+          type: array
+        director:
+          $ref: '#/components/schemas/movieDirector'
+        runTime:
+          type: number
+        reviewsCount:
+          type: number
+        user:
+          $ref: '#/components/schemas/user'
+        posterImage:
+          type: string
+        pbackgroundImage:
+          type: string
+        backgroundColor:
+          type: string
+
+    movieShort:
+      type: object
+      properties:
+        title:
+          $ref: '#/components/schemas/movieTitle'
+        published:
+          type: string
+          format: date
+        genre:
+          $ref: '#/components/schemas/movieGenre'
+        previewVideoLink:
+           type: string
+        reviewsCount:
+          type: number
+        user:
+          $ref: '#/components/schemas/user'
+        posterImage:
+          type: string
+
+    movieTitle:
+      type: string
+      minLength: 2
+      maxLength: 100
+
+    movieDesc:
+      type: string
+      minLength: 20
+      maxLength: 1024
+
+    movieDirector:
+      type: string
+      minLength: 2
+      maxLength: 50
+
+
+    movieGenre:
+      type: string
+      enum:
+      - comedy
+      - crime
+      - documentary
+      - drama
+      - horror
+      - family
+      - romance
+      - scifi
+      - thriller
+
+    reviewAdd:
+      type: object
+      properties:
+        movieId:
+          type: string
+        comment:
+          $ref: '#/components/schemas/comment'
+
+    review:
+      type: object
+      properties:
+        comment:
+          type: string
+          minLength: 5
+          maxLength: 1024
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae risus eu magna rhoncus rhoncus.
+        rating:
+          type: number
+          minimum: 1
+          maximum: 10
+          example: 2
+        date:
+          type: string
+          format: date
+        user:
+          $ref: '#/components/schemas/user'
+
+    userName:
+      type: string
+      minLength: 1
+      maxLength: 20
+
+    userAvatarUrl:
+      type: string
+      format: uri
+
+    userEmail:
+      type: string
+      format: email
+
+    userPassword:
+      type: string
+      format: password
+      minLength: 6
+      maxLength: 12
+
+    userCreate:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/userName'
+        avatarUrl:
+          $ref: '#/components/schemas/userAvatarUrl'
+        email:
+          $ref: '#/components/schemas/userEmail'
+        password:
+          $ref: '#/components/schemas/userPassword'
+      required:
+      - name
+      - email
+      - password
+      example:
+        name: Keks
+        avatarUrl: ./avatar.jpg
+        email: keks@htmlacademy.ru
+        password: 123456
+
+
+    userAuth:
+      type: object
+      properties:
+        email:
+          $ref: '#/components/schemas/userEmail'
+        password:
+          $ref: '#/components/schemas/userPassword'
+      required:
+      - email
+      - password
+      example:
+        email: keks@htmlacademy.ru
+        password: 123456
+
+    userToken:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+      - token
+
+
+    user:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/userName'
+        avatarUrl:
+          $ref: '#/components/schemas/userAvatarUrl'
+      example:
+        name: Keks
+        avatarUrl: ./avatar.jpg

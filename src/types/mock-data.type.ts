@@ -12,7 +12,7 @@ export type TMockData = {
   starringLists: string[][];
   directors: string[];
   runTimes: number[];
-  commentCounts: number[];
+  reviewsCount: number[];
   names: string[];
   emails: string[];
   avatarUrls: string[];

@@ -24,7 +24,7 @@ export const createMovie = (row: string) => {
     starring: starring.split(', '),
     director,
     runTime: Number.parseInt(runTime, 10),
-    commentsCount: Number.parseInt(commentsCount, 10),
+    reviewsCount: Number.parseInt(commentsCount, 10),
     user: {name, email, avatarUrl, password},
     posterImage,
     backgroundImage,

@@ -26,7 +26,7 @@ export default class MovieGenerator implements MovieGeneratorInterface {
     const starring = getRandomItem<string[]>(this.mockData.starringLists).join(', ');
     const director = getRandomItem<string>(this.mockData.directors);
     const runTime = getRandomItem<number>(this.mockData.runTimes).toString();
-    const commentsCount = getRandomItem<number>(this.mockData.commentCounts).toString();
+    const commentsCount = getRandomItem<number>(this.mockData.reviewsCount).toString();
     const name = getRandomItem<string>(this.mockData.names);
     const email = getRandomItem<string>(this.mockData.emails);
     const avatarUrl = getRandomItem<string>(this.mockData.avatarUrls);
