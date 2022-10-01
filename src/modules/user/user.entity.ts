@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { defaultClasses, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import { defaultClasses, getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
 
 import { CollectionName } from '../../types/enum/collection-name.enum.js';
 import { ErrorMessage } from '../../types/enum/error-message.enum.js';
@@ -7,6 +7,7 @@ import { FieldName } from '../../types/enum/field-name.enum.js';
 import { MinMax } from '../../types/enum/min-max.enum.js';
 import { TUser } from '../../types/user.type.js';
 import { createSHA256, getMaxMessage, getMinMessage } from '../../utils/common.js';
+import { MovieEntity } from '../movie/movie.entity.js';
 
 export interface UserEntity extends defaultClasses.Base {}
 
@@ -15,7 +16,6 @@ export interface UserEntity extends defaultClasses.Base {}
   collection: CollectionName.Users
   }
   })
-
 export class UserEntity extends defaultClasses.TimeStamps {
   constructor(data: TUser) {
     super();
@@ -36,6 +36,13 @@ export class UserEntity extends defaultClasses.TimeStamps {
     match: [/\.(jpe?g|png)$/i, ErrorMessage.AvatarUrl],
     })
   public avatarUrl!: string;
+
+  @prop({
+    ref: MovieEntity,
+    required: true,
+    default: [],
+    })
+  public favorites!: Ref<MovieEntity>[];
 
   @prop({
     unique: true,

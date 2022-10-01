@@ -16,3 +16,5 @@ export const DB_HOST_DEFAULT = '127.0.0.1';
 export const DB_NAME_DEFAULT = 'course-nodejs-restapi';
 
 export const USER_PASSWORD_DEFAULT = '12345';
+
+export const MOVIES_COUNT_DEFAULT = 60;

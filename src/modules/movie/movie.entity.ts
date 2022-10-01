@@ -65,7 +65,7 @@ export class MovieEntity extends defaultClasses.TimeStamps {
   public runTime!: number;
 
   @prop({default: 0})
-  public commentsCount!: number;
+  public reviewCount!: number;
 
   @prop({required: true, ref: UserEntity})
   public userId!: Ref<UserEntity>;

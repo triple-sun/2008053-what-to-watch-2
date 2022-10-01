@@ -3,5 +3,6 @@ export default class CreateReviewDTO {
   public rating!: number;
   public date!: Date;
   public userID!: string;
+  public movieID!: string;
 }
 

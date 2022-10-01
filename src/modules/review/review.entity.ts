@@ -7,6 +7,7 @@ import { FieldName } from '../../types/enum/field-name.enum.js';
 import { MinMax } from '../../types/enum/min-max.enum.js';
 import { getMaxMessage, getMinMessage } from '../../utils/common.js';
 import { UserEntity } from '../user/user.entity.js';
+import { MovieEntity } from '../movie/movie.entity.js';
 
 export interface ReviewEntity extends defaultClasses.Base {}
 
@@ -45,7 +46,13 @@ export class ReviewEntity extends defaultClasses.TimeStamps {
     ref: UserEntity,
     required: true
     })
-  public user!: Ref<UserEntity>;
+  public userID!: Ref<UserEntity>;
+
+  @prop({
+    ref: MovieEntity,
+    required: true
+    })
+  public movieID!: Ref<MovieEntity>;
 }
 
 export const ReviewModel = getModelForClass(ReviewEntity);
