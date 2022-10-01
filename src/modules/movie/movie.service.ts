@@ -12,7 +12,6 @@ import UpdateMovieDTO from './dto/update-movie.dto.js';
 import { MOVIES_COUNT_DEFAULT } from '../../const/const.js';
 import { IDKeys } from '../../types/enum/id-keys.enum.js';
 import { CollectionName } from '../../types/enum/collection-name.enum.js';
-import { getAverage } from '../../utils/common.js';
 
 @injectable()
 export default class MovieService implements MovieServiceInterface {
@@ -34,24 +33,6 @@ export default class MovieService implements MovieServiceInterface {
   }
 
   public async find(): Promise<DocumentType<MovieEntity>[]> {
-    const ratings = this.movieModel
-      .aggregate([
-        {
-          $lookup: {
-            from: CollectionName.Reviews,
-            let: { movieID: '$_id'},
-            pipeline: [
-              { $match: {movieID: '$_id'}},
-              { $project: { rating: 1 }}
-            ],
-            as: CollectionName.Reviews
-          },
-        },
-        { $addFields:
-        { id: { $toString: '$_id'}, reviewCount: { $size: '$reviews'}}
-        },
-        { $unset: CollectionName.Reviews },
-      ]);
     return this.movieModel
       .aggregate([
         {
@@ -61,7 +42,7 @@ export default class MovieService implements MovieServiceInterface {
               { $match: {movieID: '$_id'}},
               { $project: { _id: 1 }}
             ],
-            as: CollectionName.Reviews
+            as: 'reviews'
           },
         },
         {
@@ -75,9 +56,9 @@ export default class MovieService implements MovieServiceInterface {
           }
         },
         { $addFields:
-          { id: { $toString: '$_id'}, reviewCount: { $size: '$reviews'}, rating: getAverage('$ratings')}
+          { id: { $toString: '$_id'}, reviewCount: { $size: '$reviews'}, rating: { $avg: '$ratings'}}
         },
-        { $unset: CollectionName.Reviews },
+        { $unset: ['reviews, ratings']},
       ])
       .exec();
   }

@@ -26,10 +26,21 @@ export default class ImportCommand implements CliCommandInterface {
 
   private movieService!: MovieServiceInterface;
   private userService!: UserServiceInterface;
+
   private databaseService!: DatabaseInterface;
 
   private logger: LoggerInterface;
   private salt!: string;
+
+  constructor() {
+    this.onLine = this.onLine.bind(this);
+    this.onComplete = this.onComplete.bind(this);
+
+    this.logger = new ConsoleLoggerService();
+    this.movieService = new MovieService(this.logger, MovieModel);
+    this.userService = new UserService(this.logger, UserModel);
+    this.databaseService = new DatabaseService(this.logger);
+  }
 
   private async saveMovie(movie: TMovie) {
     const user = await this.userService.findOrCreate({
@@ -41,16 +52,6 @@ export default class ImportCommand implements CliCommandInterface {
       ...movie,
       userID: user.id
     });
-  }
-
-  constructor() {
-    this.onLine = this.onLine.bind(this);
-    this.onComplete = this.onComplete.bind(this);
-
-    this.logger = new ConsoleLoggerService();
-    this.movieService = new MovieService(this.logger, MovieModel);
-    this.userService = new UserService(this.logger, UserModel);
-    this.databaseService = new DatabaseService(this.logger);
   }
 
   private async onLine(line: string, resolve: () => void) {
@@ -71,6 +72,7 @@ export default class ImportCommand implements CliCommandInterface {
     await this.databaseService.connect(uri);
 
     const fileReader = new TSVFileReader(filename.trim());
+
     fileReader.on(RWConfig.Line, this.onLine);
     fileReader.on(RWConfig.End, this.onComplete);
 

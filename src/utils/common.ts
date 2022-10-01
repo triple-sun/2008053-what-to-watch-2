@@ -42,5 +42,3 @@ export const createSHA256 = (line: string, salt: string): string => {
 
 export const getMinMessage = (min: number, name: string) => `${name} must contain at least ${min} symbol${min > 1 ? 's' : ''}`;
 export const getMaxMessage = (max: number, name: string) => `${name} must be ${max} symbol${max > 1 ? 's' : ''} or less`;
-
-export const getAverage = (arr: []) => arr.reduce((a, b) => a + b, 0) / arr.length;
