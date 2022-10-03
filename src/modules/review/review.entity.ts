@@ -1,12 +1,15 @@
-import { defaultClasses, getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import mongoose, { getModelForClass, Ref, defaultClasses } from '@typegoose/typegoose';
 
+import { UserEntity } from '../user/user.entity.js';
+import { MovieEntity } from '../movie/movie.entity.js';
 import { TReview } from '../../types/review.type.js';
 import { CollectionName } from '../../types/enum/collection-name.enum.js';
 import { ErrorMessage } from '../../types/enum/error-message.enum.js';
 import { FieldName } from '../../types/enum/field-name.enum.js';
 import { MinMax } from '../../types/enum/min-max.enum.js';
 import { getMaxMessage, getMinMessage } from '../../utils/common.js';
-import { UserEntity } from '../user/user.entity.js';
+
+const { modelOptions, prop } = mongoose;
 
 export interface ReviewEntity extends defaultClasses.Base {}
 
@@ -38,14 +41,17 @@ export class ReviewEntity extends defaultClasses.TimeStamps {
     })
   public rating!: number;
 
-  @prop({default: new Date})
-  public date!: Date;
-
   @prop({
     ref: UserEntity,
     required: true
     })
-  public user!: Ref<UserEntity>;
+  public userID!: Ref<UserEntity>;
+
+  @prop({
+    ref: MovieEntity,
+    required: true
+    })
+  public movieID!: Ref<MovieEntity>;
 }
 
 export const ReviewModel = getModelForClass(ReviewEntity);

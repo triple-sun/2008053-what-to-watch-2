@@ -21,7 +21,6 @@ import { MovieEntity, MovieModel } from './modules/movie/movie.entity.js';
 import { UserServiceInterface } from './modules/user/user-service.interface.js';
 import { UserEntity, UserModel } from './modules/user/user.entity.js';
 
-
 const appContainer = new Container();
 
 appContainer.bind<App>(Component.App).to(App).inSingletonScope();
@@ -42,3 +41,4 @@ appContainer.bind<types.ModelType<UserEntity>>(Component.UserModel).toConstantVa
 const app = appContainer.get<App>(Component.App);
 
 await app.init();
+

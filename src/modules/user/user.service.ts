@@ -7,6 +7,8 @@ import { UserEntity } from './user.entity.js';
 import { Component } from '../../types/component.types.js';
 import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { InfoMessage } from '../../types/enum/info-message.enum.js';
+import UpdateUserDTO from './dto/update-user.dto.js';
+import { IDKeys } from '../../types/enum/id-keys.enum.js';
 
 @injectable()
 export default class UserService implements UserServiceInterface {
@@ -38,5 +40,12 @@ export default class UserService implements UserServiceInterface {
     }
 
     return this.create(dto, salt);
+  }
+
+  public async updateByID(userID: string, dto: UpdateUserDTO): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel
+      .findByIdAndUpdate(userID, dto, {new: true})
+      .populate([IDKeys.Favorites])
+      .exec();
   }
 }

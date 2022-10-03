@@ -1,12 +1,14 @@
-import { defaultClasses, getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import mongoose, { defaultClasses, getModelForClass, Ref } from '@typegoose/typegoose';
 
+import { UserEntity } from '../user/user.entity.js';
 import { CollectionName } from '../../types/enum/collection-name.enum.js';
 import { ErrorMessage } from '../../types/enum/error-message.enum.js';
 import { FieldName } from '../../types/enum/field-name.enum.js';
 import { Genre } from '../../types/enum/genre.enum.js';
 import { MinMax } from '../../types/enum/min-max.enum.js';
 import { getMaxMessage, getMinMessage } from '../../utils/common.js';
-import { UserEntity } from '../user/user.entity.js';
+
+const { modelOptions, prop } = mongoose;
 
 export interface MovieEntity extends defaultClasses.Base {}
 
@@ -65,10 +67,13 @@ export class MovieEntity extends defaultClasses.TimeStamps {
   public runTime!: number;
 
   @prop({default: 0})
-  public commentsCount!: number;
+  public reviewCount!: number;
 
-  @prop({required: true, ref: UserEntity})
-  public userId!: Ref<UserEntity>;
+  @prop({
+    ref: UserEntity,
+    required: true
+    })
+  public userID!: Ref<UserEntity>;
 
   @prop({
     required: true,
