@@ -56,11 +56,8 @@ export default class UserController extends Controller {
     }
 
     const result = await this.userService.create(body, salt as string);
-    this.send(
-      res,
-      StatusCodes.CREATED,
-      fillDTO(UserResponse, result)
-    );
+
+    this.created(res, fillDTO(UserResponse, result));
   }
 
   public async login(

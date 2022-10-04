@@ -36,7 +36,7 @@ export default class MovieController extends Controller {
   public async index(_req: Request, res: Response): Promise<void> {
     const movies = await this.movieService.find();
     const movieResponse = fillDTO(MovieResponse, movies);
-    this.send(res, StatusCodes.OK, movieResponse);
+    this.ok(res, movieResponse);
   }
 
   public async create(
@@ -54,11 +54,8 @@ export default class MovieController extends Controller {
     }
 
     const result = await this.movieService.create(body);
-    this.send(
-      res,
-      StatusCodes.CREATED,
-      fillDTO(MovieResponse, result)
-    );
+
+    this.created(res, fillDTO(MovieResponse, result));
   }
 
   public async update(
@@ -76,11 +73,8 @@ export default class MovieController extends Controller {
     }
 
     const result = await this.movieService.updateById(body.id, body);
-    this.send(
-      res,
-      StatusCodes.OK,
-      fillDTO(MovieResponse, result)
-    );
+
+    this.ok(res, fillDTO(MovieResponse, result));
   }
 
   public async delete(
@@ -98,10 +92,7 @@ export default class MovieController extends Controller {
     }
 
     const result = await this.movieService.deleteById(body.id);
-    this.send(
-      res,
-      StatusCodes.OK,
-      fillDTO(MovieResponse, result)
-    );
+
+    this.ok(res, fillDTO(MovieResponse, result));
   }
 }
