@@ -10,6 +10,7 @@ export interface MovieServiceInterface {
   exists(documentId: string): Promise<boolean>;
   find(): Promise<DocumentType<MovieEntity>[]>;
   findByGenre(genre: Genre): Promise<DocumentType<MovieEntity>[]>;
+  findByTitle(title: string): Promise<DocumentType<MovieEntity> | null>;
   findById(movieID: string): Promise<DocumentType<MovieEntity> | null>;
   deleteById(movieID: string): Promise<DocumentType<MovieEntity> | null>;
   updateById(movieID: string, dto: UpdateMovieDTO): Promise<DocumentType<MovieEntity> | null>;
