@@ -8,14 +8,40 @@ import { Component } from '../types/component.types.js';
 import { DatabaseInterface } from '../common/database-client/database.interface.js';
 import { getURI } from '../utils/db.js';
 import { Env } from '../types/enum/env.enum.js';
+import express, { Express } from 'express';
+import { ControllerInterface } from '../common/controller/controller.interface.js';
+import { Path } from '../types/enum/path.enum.js';
+import { ExceptionFilterInterface } from '../common/errors/exception-filter.interface.js';
 
 @injectable()
 export default class App {
+  private expressApp: Express;
+
   constructor(
     @inject(Component.LoggerInterface) private logger: LoggerInterface,
     @inject(Component.ConfigInterface) private config: ConfigInterface,
-    @inject(Component.DatabaseInterface) private databaseClient: DatabaseInterface
-  ) {}
+    @inject(Component.DatabaseInterface) private databaseClient: DatabaseInterface,
+    @inject(Component.ExceptionFilterInterface) private exceptionFilter: ExceptionFilterInterface,
+    @inject(Component.MovieController) private movieController: ControllerInterface,
+    @inject(Component.ReviewController) private reviewController: ControllerInterface,
+    @inject(Component.UserController) private userController: ControllerInterface
+  ) {
+    this.expressApp = express();
+  }
+
+  public initRoutes() {
+    this.expressApp.use(Path.Movies, this.movieController.router);
+    this.expressApp.use(Path.Reviews, this.reviewController.router);
+    this.expressApp.use(Path.Users, this.userController.router);
+  }
+
+  public initMiddleware() {
+    this.expressApp.use(express.json());
+  }
+
+  public initExceptionFilters() {
+    this.expressApp.use(this.exceptionFilter.catch.bind(this.exceptionFilter));
+  }
 
   public async init() {
     this.logger.info(InfoMessage.AppInit);
@@ -31,5 +57,11 @@ export default class App {
     );
 
     await this.databaseClient.connect(uri);
+
+    this.initRoutes();
+    this.initMiddleware();
+    this.initExceptionFilters();
+    this.expressApp.listen(this.config.get(Env.Port));
+    this.logger.info(`${InfoMessage.ServerStarted}${this.config.get(Env.Port)}`);
   }
 }

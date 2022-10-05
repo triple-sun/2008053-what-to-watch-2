@@ -3,10 +3,14 @@ export const Component = {
   ConfigInterface: Symbol.for('ConfigInterface'),
   DatabaseInterface: Symbol.for('DatabaseInterface'),
   LoggerInterface: Symbol.for('LoggerInterface'),
+  ExceptionFilterInterface: Symbol.for('ExceptionFilterInterface'),
   ReviewServiceInterface: Symbol.for('ReviewServiceInterface'),
   MovieServiceInterface: Symbol.for('MovieServiceInterface'),
   UserServiceInterface: Symbol.for('UserServiceInterface'),
   MovieModel: Symbol.for('MovieModel'),
   ReviewModel: Symbol.for('ReviewModel'),
-  UserModel: Symbol.for('UserModel')
+  UserModel: Symbol.for('UserModel'),
+  MovieController: Symbol.for('MovieController'),
+  ReviewController: Symbol.for('ReviewController'),
+  UserController: Symbol.for('UserController'),
 } as const;

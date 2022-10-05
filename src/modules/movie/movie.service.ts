@@ -70,9 +70,16 @@ export default class MovieService implements MovieServiceInterface {
       .exec();
   }
 
+  public async findByTitle(title: string): Promise<DocumentType<MovieEntity> | null> {
+    return this.movieModel
+      .findOne({ title })
+      .populate([IDKeys.User])
+      .exec();
+  }
+
   public async findByGenre(genre: Genre): Promise<DocumentType<MovieEntity>[]> {
     return this.movieModel
-      .find({ genre: genre }, {}, {MOVIES_COUNT_DEFAULT})
+      .find({ genre }, {}, {MOVIES_COUNT_DEFAULT})
       .populate([IDKeys.User])
       .exec();
   }

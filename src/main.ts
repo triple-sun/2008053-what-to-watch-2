@@ -20,6 +20,11 @@ import { MovieServiceInterface } from './modules/movie/movie-service.interface.j
 import { MovieEntity, MovieModel } from './modules/movie/movie.entity.js';
 import { UserServiceInterface } from './modules/user/user-service.interface.js';
 import { UserEntity, UserModel } from './modules/user/user.entity.js';
+import MovieController from './modules/movie/movie.controller.js';
+import { ControllerInterface } from './common/controller/controller.interface.js';
+import { ExceptionFilterInterface } from './common/errors/exception-filter.interface.js';
+import ExceptionFilter from './common/errors/exception-filter.js';
+import UserController from './modules/user/user.controller.js';
 
 const appContainer = new Container();
 
@@ -28,6 +33,7 @@ appContainer.bind<App>(Component.App).to(App).inSingletonScope();
 appContainer.bind<LoggerInterface>(Component.LoggerInterface).to(LoggerService).inSingletonScope();
 appContainer.bind<ConfigInterface>(Component.ConfigInterface).to(ConfigService).inSingletonScope();
 appContainer.bind<DatabaseInterface>(Component.DatabaseInterface).to(DatabaseService).inSingletonScope();
+appContainer.bind<ExceptionFilterInterface>(Component.ExceptionFilterInterface).to(ExceptionFilter).inSingletonScope();
 
 appContainer.bind<ReviewServiceInterface>(Component.ReviewServiceInterface).to(ReviewService);
 appContainer.bind<types.ModelType<ReviewEntity>>(Component.ReviewModel).toConstantValue(ReviewModel);
@@ -37,6 +43,10 @@ appContainer.bind<types.ModelType<MovieEntity>>(Component.MovieModel).toConstant
 
 appContainer.bind<UserServiceInterface>(Component.UserServiceInterface).to(UserService);
 appContainer.bind<types.ModelType<UserEntity>>(Component.UserModel).toConstantValue(UserModel);
+
+appContainer.bind<ControllerInterface>(Component.MovieController).to(MovieController).inSingletonScope();
+appContainer.bind<ControllerInterface>(Component.UserController).to(UserController).inSingletonScope();
+
 
 const app = appContainer.get<App>(Component.App);
 

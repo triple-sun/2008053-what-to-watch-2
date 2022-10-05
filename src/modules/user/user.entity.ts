@@ -7,6 +7,7 @@ import { FieldName } from '../../types/enum/field-name.enum.js';
 import { MinMax } from '../../types/enum/min-max.enum.js';
 import { TUser } from '../../types/user.type.js';
 import { createSHA256, getMaxMessage, getMinMessage } from '../../utils/common.js';
+import { emailRegEx } from '../../const/const.js';
 
 const { modelOptions, prop } = mongoose;
 
@@ -21,8 +22,11 @@ export class UserEntity extends defaultClasses.TimeStamps {
   constructor(data: TUser) {
     super();
 
+    if (data.avatarUrl) {
+      this.avatarUrl = data.avatarUrl;
+    }
+
     this.name = data.name;
-    this.avatarUrl = data.avatarUrl;
     this.email = data.email;
     this.favorites = [];
   }
@@ -48,7 +52,7 @@ export class UserEntity extends defaultClasses.TimeStamps {
   @prop({
     unique: true,
     required: true,
-    match: [/^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/, ErrorMessage.Email],
+    match: [emailRegEx, ErrorMessage.Email],
     })
   public email!: string;
 
@@ -56,7 +60,6 @@ export class UserEntity extends defaultClasses.TimeStamps {
   private password!: string;
 
   public setPassword(password: string, salt: string) {
-    console.log(password);
     if (password.length < MinMax.UserPassMin || password.length > MinMax.UserPassMax) {
       console.log(chalk.red.bold(ErrorMessage.Password));
       return;
