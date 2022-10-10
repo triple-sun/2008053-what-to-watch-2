@@ -2,6 +2,12 @@ import { Genre } from '../types/enum/genre.enum.js';
 import { TMovie } from '../types/movie.type.js';
 import crypto from 'crypto';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
+import HttpError from '../common/errors/http-error.js';
+import { StatusCodes } from 'http-status-codes';
+import { ErrorMessage } from '../types/enum/error-message.enum.js';
+import { DocumentType } from '@typegoose/typegoose';
+import { MovieEntity } from '../modules/movie/movie.entity.js';
+import { BeAnObject } from '@typegoose/typegoose/lib/types.js';
 
 export const createMovie = (row: string) => {
   const tokens = row.replace('\n', '').split('\t');
@@ -43,6 +49,8 @@ export const createSHA256 = (line: string, salt: string): string => {
 
 export const getMinMessage = (min: number, name: string) => `${name} must contain at least ${min} symbol${min > 1 ? 's' : ''}`;
 export const getMaxMessage = (max: number, name: string) => `${name} must be ${max} symbol${max > 1 ? 's' : ''} or less`;
+
+export const getRequiredMessage = (name: string) => `${name} is required`;
 
 export const fillDTO = <T, V>(someDto: ClassConstructor<T>, plainObject: V) => plainToInstance(someDto, plainObject, {excludeExtraneousValues: true});
 

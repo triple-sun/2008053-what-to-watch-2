@@ -9,13 +9,19 @@ import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { InfoMessage } from '../../types/enum/info-message.enum.js';
 import UpdateUserDTO from './dto/update-user.dto.js';
 import { IDKeys } from '../../types/enum/id-keys.enum.js';
+import { MovieServiceInterface } from '../movie/movie-service.interface.js';
 
 @injectable()
 export default class UserService implements UserServiceInterface {
   constructor(
     @inject(Component.LoggerInterface) private logger: LoggerInterface,
-    @inject(Component.UserModel) private readonly userModel: types.ModelType<UserEntity>
+    @inject(Component.UserModel) private readonly userModel: types.ModelType<UserEntity>,
   ) {}
+
+  public async exists(documentId: string): Promise<boolean> {
+    return (await this.userModel
+      .exists({_id: documentId})) !== null;
+  }
 
   public async create(dto: CreateUserDTO, salt: string): Promise<DocumentType<UserEntity>> {
     const user = new UserEntity(dto);

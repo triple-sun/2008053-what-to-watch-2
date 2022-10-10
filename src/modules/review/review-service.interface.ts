@@ -5,5 +5,5 @@ import CreateReviewDTO from './dto/create-review.dto.js';
 
 export interface ReviewServiceInterface {
   create(dto: CreateReviewDTO): Promise<DocumentType<ReviewEntity>>;
-  findByMovieId(movieID: string): Promise<DocumentType<ReviewEntity>[]>;
+  findByMovieID(movieID: string): Promise<DocumentType<ReviewEntity>[]>;
 }

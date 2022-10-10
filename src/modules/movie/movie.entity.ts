@@ -7,6 +7,7 @@ import { FieldName } from '../../types/enum/field-name.enum.js';
 import { Genre } from '../../types/enum/genre.enum.js';
 import { MinMax } from '../../types/enum/min-max.enum.js';
 import { getMaxMessage, getMinMessage } from '../../utils/common.js';
+import { ReviewEntity } from '../review/review.entity.js';
 
 const { modelOptions, prop } = mongoose;
 

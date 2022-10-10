@@ -24,7 +24,7 @@ export default class ReviewService implements ReviewServiceInterface {
     return result;
   }
 
-  public async findByMovieId(movieID: string): Promise<DocumentType<ReviewEntity>[]> {
+  public async findByMovieID(movieID: string): Promise<DocumentType<ReviewEntity>[]> {
     return this.reviewModel
       .find({movieID: movieID})
       .populate([IDKeys.Movie, IDKeys.User])

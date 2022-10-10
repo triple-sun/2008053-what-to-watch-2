@@ -2,7 +2,8 @@ import {Controller} from '../../common/controller/controller.js';
 import {inject, injectable} from 'inversify';
 import {Component} from '../../types/component.types.js';
 import {LoggerInterface} from '../../common/logger/logger.interface.js';
-import {NextFunction, Request, Response} from 'express';
+import { Request, Response} from 'express';
+import * as core from 'express-serve-static-core';
 import CreateUserDto from './dto/create-user.dto.js';
 import { HttpMethod } from '../../types/enum/http-method.enum.js';
 import { InfoMessage } from '../../types/enum/info-message.enum.js';
@@ -15,21 +16,34 @@ import { fillDTO } from '../../utils/common.js';
 import UserResponse from './user.response.js';
 import { Env } from '../../types/enum/env.enum.js';
 import { ErrorMessage } from '../../types/enum/error-message.enum.js';
-import { ErrorDetails } from '../../types/enum/error-details.enum.js';
+import { ErrorDetails } from '../../types/enum/error-conroller.enum.js';
 import LoginUserDTO from './dto/login-user.dto.js';
+import { MovieServiceInterface } from '../movie/movie-service.interface.js';
+import { ValidateDTOMiddleware } from '../../common/middlewares/validate-dto.middleware.js';
 
 @injectable()
 export default class UserController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
     @inject(Component.UserServiceInterface) private readonly userService: UserServiceInterface,
-    @inject(Component.ConfigInterface) private readonly configService: ConfigService
+    @inject(Component.ConfigInterface) private readonly configService: ConfigService,
   ) {
     super(logger);
     this.logger.info(InfoMessage.UserController);
 
-    this.addRoute({path: Path.Register, method: HttpMethod.Post, handler: this.create});
-    this.addRoute({path: Path.Login, method: HttpMethod.Post, handler: this.login});
+    this.addRoute({
+      path: Path.Register,
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDTOMiddleware(CreateUserDto)]
+    });
+
+    this.addRoute({
+      path: Path.Login,
+      method: HttpMethod.Post,
+      handler: this.login,
+      middlewares: [new ValidateDTOMiddleware(LoginUserDTO)]
+    });
   }
 
   public async create(
