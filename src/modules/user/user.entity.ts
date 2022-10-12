@@ -61,7 +61,7 @@ export class UserEntity extends defaultClasses.TimeStamps {
 
   public setPassword(password: string, salt: string) {
     if (password.length < MinMax.UserPassMin || password.length > MinMax.UserPassMax) {
-      console.log(chalk.red.bold(ErrorMessage.Password));
+      console.log(chalk.red.bold(ErrorMessage.PasswordLength));
       return;
     }
 

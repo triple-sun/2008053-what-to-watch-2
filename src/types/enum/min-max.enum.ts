@@ -13,4 +13,5 @@ export enum MinMax {
   UserNameMax = 15,
   UserPassMin = 6,
   UserPassMax = 12,
+  ImageFieldMin = 256,
 }
