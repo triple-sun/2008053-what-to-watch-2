@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 
+import express, { Express } from 'express';
 import { LoggerInterface } from '../common/logger/logger.interface.js';
 import { InfoMessage } from '../types/enum/info-message.enum.js';
 import { ConfigInterface } from '../common/config/config.interface.js';
@@ -8,7 +9,6 @@ import { Component } from '../types/component.types.js';
 import { DatabaseInterface } from '../common/database-client/database.interface.js';
 import { getURI } from '../utils/db.js';
 import { Env } from '../types/enum/env.enum.js';
-import express, { Express } from 'express';
 import { ControllerInterface } from '../common/controller/controller.interface.js';
 import { Path } from '../types/enum/path.enum.js';
 import { ExceptionFilterInterface } from '../common/errors/exception-filter.interface.js';
@@ -37,6 +37,10 @@ export default class App {
 
   public initMiddleware() {
     this.expressApp.use(express.json());
+    this.expressApp.use(
+      Path.Upload,
+      express.static(this.config.get(Env.Upload))
+    );
   }
 
   public initExceptionFilters() {

@@ -1,6 +1,7 @@
 import {Expose, Type} from 'class-transformer';
-import { Genre } from '../../types/enum/genre.enum';
-import UserResponse from '../user/user.response';
+import { Genre } from '../../types/enum/genre.enum.js';
+import { ParamName } from '../../types/enum/param-name.enum.js';
+import UserResponse from '../user/user.response.js';
 
 export default class MovieResponse {
   @Expose()
@@ -12,7 +13,7 @@ export default class MovieResponse {
   @Expose()
   public description!: string;
 
-  @Expose({ name: 'createdAt' })
+  @Expose({ name: ParamName.CreatedAt })
   public published!: string;
 
   @Expose()
@@ -36,7 +37,7 @@ export default class MovieResponse {
   @Expose()
   public runTime!: number;
 
-  @Expose({ name: 'userID' })
+  @Expose({ name: ParamName.UserID })
   @Type(() => UserResponse)
   public user!: string;
 

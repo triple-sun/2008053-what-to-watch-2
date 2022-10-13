@@ -1,11 +1,15 @@
 export enum Path {
-  Main = '/',
-  Movies = '/movies',
-  MovieID = 'movieID',
-  Promo = '/promo',
-  Reviews = '/reviews',
   AddReview = '/add',
-  Users = '/users',
+  Avatar = '/avatar',
+  Favorites = '/favorites',
+  Login = '/login',
+  Main = '/',
+  MovieID = '/:movieID',
+  Movies = '/movies',
+  Promo = '/promo',
   Register = '/register',
-  Login = '/login'
+  Reviews = '/reviews',
+  Upload = '/upload',
+  UserID = '/:userID',
+  Users = '/users',
 }

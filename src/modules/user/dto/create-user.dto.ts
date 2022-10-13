@@ -1,7 +1,7 @@
 import { MaxLength, MinLength, IsEmail, IsString, IsOptional } from 'class-validator';
-import { ErrorMessage } from '../../../types/enum/error-message.enum';
-import { FieldName } from '../../../types/enum/field-name.enum';
-import { MinMax } from '../../../types/enum/min-max.enum';
+import { ErrorMessage } from '../../../types/enum/error-message.enum.js';
+import { FieldName } from '../../../types/enum/field-name.enum.js';
+import { MinMax } from '../../../types/enum/min-max.enum.js';
 import { getMaxMessage, getMinMessage, getRequiredMessage } from '../../../utils/common.js';
 
 export default class CreateUserDTO {

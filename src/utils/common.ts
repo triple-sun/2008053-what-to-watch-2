@@ -2,12 +2,6 @@ import { Genre } from '../types/enum/genre.enum.js';
 import { TMovie } from '../types/movie.type.js';
 import crypto from 'crypto';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
-import HttpError from '../common/errors/http-error.js';
-import { StatusCodes } from 'http-status-codes';
-import { ErrorMessage } from '../types/enum/error-message.enum.js';
-import { DocumentType } from '@typegoose/typegoose';
-import { MovieEntity } from '../modules/movie/movie.entity.js';
-import { BeAnObject } from '@typegoose/typegoose/lib/types.js';
 
 export const createMovie = (row: string) => {
   const tokens = row.replace('\n', '').split('\t');

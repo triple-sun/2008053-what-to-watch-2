@@ -1,6 +1,8 @@
+import * as core from 'express-serve-static-core';
 
 import {Request, Response} from 'express';
 import {inject, injectable} from 'inversify';
+
 import {Controller} from '../../common/controller/controller.js';
 import {Component} from '../../types/component.types.js';
 import {LoggerInterface} from '../../common/logger/logger.interface.js';
@@ -8,10 +10,8 @@ import { HttpMethod } from '../../types/enum/http-method.enum.js';
 import { InfoMessage } from '../../types/enum/info-message.enum.js';
 import { MovieServiceInterface } from './movie-service.interface.js';
 import { fillDTO } from '../../utils/common.js';
-import * as core from 'express-serve-static-core';
 import MovieResponse from './movie.response.js';
 import CreateMovieDTO from './dto/create-movie.dto.js';
-import { ErrorDetails } from '../../types/enum/error-conroller.enum.js';
 import { Path } from '../../types/enum/path.enum.js';
 import UpdateMovieDTO from './dto/update-movie.dto.js';
 import { ParamsGetMovie } from '../../types/params.types.js';
@@ -46,43 +46,43 @@ export default class MovieController extends Controller {
     });
 
     this.addRoute({
-      path: `/:${Path.MovieID}`,
+      path: Path.MovieID,
       method: HttpMethod.Get,
       handler: this.show,
       middlewares: [
-        new ValidateObjectIdMiddleware(Path.MovieID),
-        new DocumentExistsMiddleware(this.movieService, ModelName.Movie, ParamName.MovieID)
+        new ValidateObjectIdMiddleware(ParamName.MovieID),
+        new DocumentExistsMiddleware(this.movieService, ModelName.Movie, ParamName.MovieID),
       ]
     });
 
 
     this.addRoute({
-      path: `/:${Path.MovieID}`,
+      path: Path.MovieID,
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
-        new ValidateObjectIdMiddleware(Path.MovieID),
-        new DocumentExistsMiddleware(this.movieService, ModelName.Movie, ParamName.MovieID),
         new ValidateDTOMiddleware(UpdateMovieDTO),
+        new ValidateObjectIdMiddleware(ParamName.MovieID),
+        new DocumentExistsMiddleware(this.movieService, ModelName.Movie, ParamName.MovieID),
       ]
     });
 
     this.addRoute({
-      path: `/:${Path.MovieID}`,
+      path: Path.MovieID,
       method: HttpMethod.Delete,
       handler: this.delete,
       middlewares: [
-        new ValidateObjectIdMiddleware(Path.MovieID),
+        new ValidateObjectIdMiddleware(ParamName.MovieID),
         new DocumentExistsMiddleware(this.movieService, ModelName.Movie, ParamName.MovieID)
       ]
     });
 
     this.addRoute({
-      path: `/:${Path.MovieID}${Path.Reviews}`,
+      path: `${Path.MovieID}${Path.Reviews}`,
       method: HttpMethod.Get,
       handler: this.getReviewsForMovie,
       middlewares: [
-        new ValidateObjectIdMiddleware(Path.MovieID),
+        new ValidateObjectIdMiddleware(ParamName.MovieID),
         new DocumentExistsMiddleware(this.movieService, ModelName.Movie, ParamName.MovieID)
       ]
     });
@@ -98,7 +98,7 @@ export default class MovieController extends Controller {
     {params}: Request<core.ParamsDictionary | ParamsGetMovie>,
     res: Response
   ): Promise<void> {
-    const movie = await this.movieService.findById(params.movieID);
+    const movie = await this.movieService.findByID(params.movieID);
 
     this.ok(res, movie);
   }
@@ -108,7 +108,7 @@ export default class MovieController extends Controller {
     res: Response
   ): Promise<void> {
     const result = await this.movieService.create(body);
-    const movie = await this.movieService.findById(result.id);
+    const movie = await this.movieService.findByID(result.id);
 
     this.created(res, fillDTO(MovieResponse, movie));
   }
@@ -117,7 +117,7 @@ export default class MovieController extends Controller {
     {body, params}: Request<core.ParamsDictionary | ParamsGetMovie, Record<string, unknown>, UpdateMovieDTO>,
     res: Response
   ): Promise<void> {
-    const updatedMovie = await this.movieService.updateById(params.movieID, body);
+    const updatedMovie = await this.movieService.updateByID(params.movieID, body);
 
     this.ok(res, fillDTO(MovieResponse, updatedMovie));
   }
@@ -126,7 +126,7 @@ export default class MovieController extends Controller {
     {params}: Request<core.ParamsDictionary | ParamsGetMovie>,
     res: Response
   ): Promise<void> {
-    const movie = await this.movieService.deleteById(params.movieID);
+    const movie = await this.movieService.deleteByID(params.movieID);
 
     this.ok(res, fillDTO(MovieResponse, movie));
   }

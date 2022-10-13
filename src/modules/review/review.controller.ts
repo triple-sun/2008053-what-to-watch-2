@@ -8,13 +8,11 @@ import { Path } from '../../types/enum/path.enum.js';
 import { ReviewServiceInterface } from './review-service.interface.js';
 import { HttpMethod } from '../../types/enum/http-method.enum.js';
 import { fillDTO } from '../../utils/common.js';
-import { ErrorDetails } from '../../types/enum/error-conroller.enum.js';
 import ReviewResponse from './review.response.js';
 import CreateReviewDTO from './dto/create-review.dto.js';
 import { ModelName } from '../../types/enum/model-name.enum.js';
 import { MovieServiceInterface } from '../movie/movie-service.interface.js';
 import { ValidateDTOMiddleware } from '../../common/middlewares/validate-dto.middleware.js';
-import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../common/middlewares/document-exists.middleware.js';
 import { ParamName } from '../../types/enum/param-name.enum.js';
 
@@ -34,8 +32,8 @@ export default class ReviewController extends Controller {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
+        new ValidateDTOMiddleware(CreateReviewDTO),
         new DocumentExistsMiddleware(this.movieService, ModelName.Movie, ParamName.MovieID),
-        new ValidateDTOMiddleware(CreateReviewDTO)
       ]
     });
   }

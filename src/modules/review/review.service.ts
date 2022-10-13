@@ -7,7 +7,7 @@ import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { InfoMessage } from '../../types/enum/info-message.enum.js';
 import { ReviewServiceInterface } from './review-service.interface.js';
 import { ReviewEntity } from './review.entity.js';
-import { IDKeys } from '../../types/enum/id-keys.enum.js';
+import { ParamName } from '../../types/enum/param-name.enum.js';
 
 @injectable()
 export default class ReviewService implements ReviewServiceInterface {
@@ -27,7 +27,7 @@ export default class ReviewService implements ReviewServiceInterface {
   public async findByMovieID(movieID: string): Promise<DocumentType<ReviewEntity>[]> {
     return this.reviewModel
       .find({movieID: movieID})
-      .populate([IDKeys.Movie, IDKeys.User])
+      .populate([ParamName.MovieID, ParamName.UserID])
       .exec();
   }
 }
