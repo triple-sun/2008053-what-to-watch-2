@@ -1,5 +1,5 @@
 import { Genre } from '../../../types/enum/genre.enum.js';
-import {IsArray, IsDateString, IsEnum, IsInt, IsMongoId, MaxLength, MinLength, IsOptional, IsString, IsUrl} from 'class-validator';
+import {IsArray, IsEnum, IsInt, IsMongoId, MaxLength, MinLength, IsOptional, IsString, IsUrl} from 'class-validator';
 import { ErrorMessage } from '../../../types/enum/error-message.enum.js';
 import { MinMax } from '../../../types/enum/min-max.enum.js';
 import { FieldName } from '../../../types/enum/field-name.enum.js';

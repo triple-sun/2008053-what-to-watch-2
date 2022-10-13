@@ -11,6 +11,7 @@ convict.addFormats(validator);
 export type ConfigSchema = {
   PORT: number;
   SALT: string;
+  UPLOAD: string;
   DB_HOST: string;
   DB_PORT: number;
   DB_USER: string;
@@ -29,6 +30,12 @@ export const configSchema = convict<ConfigSchema>({
     doc: Doc.Salt,
     format: String,
     env: Env.Salt,
+    default: null
+  },
+  UPLOAD: {
+    doc: Doc.Upload,
+    format: String,
+    env: Env.Upload,
     default: null
   },
   DB_HOST: {

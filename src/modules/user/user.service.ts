@@ -8,8 +8,7 @@ import { Component } from '../../types/component.types.js';
 import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { InfoMessage } from '../../types/enum/info-message.enum.js';
 import UpdateUserDTO from './dto/update-user.dto.js';
-import { IDKeys } from '../../types/enum/id-keys.enum.js';
-import { MovieServiceInterface } from '../movie/movie-service.interface.js';
+import { ParamName } from '../../types/enum/param-name.enum.js';
 
 @injectable()
 export default class UserService implements UserServiceInterface {
@@ -34,6 +33,13 @@ export default class UserService implements UserServiceInterface {
     return result;
   }
 
+  public async findByID(userID: string): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel
+      .findById(userID)
+      .populate([ParamName.UserID])
+      .exec();
+  }
+
   public async findByEmail(email: string): Promise<DocumentType<UserEntity> | null> {
     return this.userModel.findOne({email});
   }
@@ -51,7 +57,7 @@ export default class UserService implements UserServiceInterface {
   public async updateByID(userID: string, dto: UpdateUserDTO): Promise<DocumentType<UserEntity> | null> {
     return this.userModel
       .findByIdAndUpdate(userID, dto, {new: true})
-      .populate([IDKeys.Favorites])
+      .populate([ParamName.Favorites])
       .exec();
   }
 }

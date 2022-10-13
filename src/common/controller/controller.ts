@@ -5,8 +5,6 @@ import {LoggerInterface} from '../logger/logger.interface.js';
 import {RouteInterface} from '../../types/route.interface.js';
 import {ControllerInterface} from './controller.interface.js';
 import { InfoMessage } from '../../types/enum/info-message.enum.js';
-import HttpError from '../errors/http-error.js';
-import { ErrorMessage } from '../../types/enum/error-message.enum.js';
 import expressAsyncHandler from 'express-async-handler';
 
 @injectable()

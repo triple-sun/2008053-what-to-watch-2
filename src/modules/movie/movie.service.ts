@@ -10,8 +10,8 @@ import { InfoMessage } from '../../types/enum/info-message.enum.js';
 import { Genre } from '../../types/enum/genre.enum.js';
 import UpdateMovieDTO from './dto/update-movie.dto.js';
 import { MOVIES_COUNT_DEFAULT } from '../../const/const.js';
-import { IDKeys } from '../../types/enum/id-keys.enum.js';
 import { CollectionName } from '../../types/enum/collection-name.enum.js';
+import { ParamName } from '../../types/enum/param-name.enum.js';
 
 @injectable()
 export default class MovieService implements MovieServiceInterface {
@@ -63,37 +63,37 @@ export default class MovieService implements MovieServiceInterface {
       .exec();
   }
 
-  public async findById(movieID: string): Promise<DocumentType<MovieEntity> | null> {
+  public async findByID(movieID: string): Promise<DocumentType<MovieEntity> | null> {
     return this.movieModel
       .findById(movieID)
-      .populate([IDKeys.User])
+      .populate([ParamName.UserID])
       .exec();
   }
 
   public async findByTitle(title: string): Promise<DocumentType<MovieEntity> | null> {
     return this.movieModel
       .findOne({ title })
-      .populate([IDKeys.User])
+      .populate([ParamName.UserID])
       .exec();
   }
 
   public async findByGenre(genre: Genre): Promise<DocumentType<MovieEntity>[]> {
     return this.movieModel
       .find({ genre }, {}, {MOVIES_COUNT_DEFAULT})
-      .populate([IDKeys.User])
+      .populate([ParamName.UserID])
       .exec();
   }
 
-  public async deleteById(movieID: string): Promise<DocumentType<MovieEntity> | null> {
+  public async deleteByID(movieID: string): Promise<DocumentType<MovieEntity> | null> {
     return this.movieModel
       .findByIdAndDelete(movieID)
       .exec();
   }
 
-  public async updateById(movieID: string, dto: UpdateMovieDTO): Promise<DocumentType<MovieEntity> | null> {
+  public async updateByID(movieID: string, dto: UpdateMovieDTO): Promise<DocumentType<MovieEntity> | null> {
     return this.movieModel
       .findByIdAndUpdate(movieID, dto, {new: true})
-      .populate([IDKeys.User])
+      .populate([ParamName.UserID])
       .exec();
   }
 

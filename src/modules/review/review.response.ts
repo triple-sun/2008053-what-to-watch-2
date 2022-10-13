@@ -1,6 +1,6 @@
 import { Expose, Type } from 'class-transformer';
-import MovieResponse from '../movie/movie.response';
-import UserResponse from '../user/user.response';
+import { ParamName } from '../../types/enum/param-name.enum.js';
+import UserResponse from '../user/user.response.js';
 
 export default class ReviewResponse {
   @Expose()
@@ -9,10 +9,10 @@ export default class ReviewResponse {
   @Expose()
   public rating!: number;
 
-  @Expose({ name: 'createdAt' })
+  @Expose({ name: ParamName.CreatedAt })
   public date!: Date;
 
-  @Expose({ name: 'userID' })
+  @Expose({ name: ParamName.UserID })
   @Type(() => UserResponse)
   public user!: UserResponse;
 }
