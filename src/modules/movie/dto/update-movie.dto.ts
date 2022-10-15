@@ -1,5 +1,6 @@
+import { IsArray, IsEnum, IsInt, MaxLength, MinLength, IsOptional, IsString, IsUrl } from 'class-validator';
+
 import { Genre } from '../../../types/enum/genre.enum.js';
-import {IsArray, IsEnum, IsInt, IsMongoId, MaxLength, MinLength, IsOptional, IsString, IsUrl} from 'class-validator';
 import { ErrorMessage } from '../../../types/enum/error-message.enum.js';
 import { MinMax } from '../../../types/enum/min-max.enum.js';
 import { FieldName } from '../../../types/enum/field-name.enum.js';
@@ -46,9 +47,6 @@ export default class UpdateMovieDTO {
 
   @IsInt({message: ErrorMessage.Integer})
   public runTime?: number;
-
-  @IsMongoId({message: ErrorMessage.ID})
-  public userID?: string;
 
   @IsString({message: ErrorMessage.Image})
   @MinLength(MinMax.ImageFieldMin, {message: ErrorMessage.ImageLength})

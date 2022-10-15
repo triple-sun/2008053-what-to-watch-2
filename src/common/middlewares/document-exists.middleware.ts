@@ -1,7 +1,8 @@
-import {MiddlewareInterface} from '../../types/middleware.interface.js';
-import {NextFunction, Request, Response} from 'express';
+import { NextFunction, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+
 import HttpError from '../errors/http-error.js';
-import {StatusCodes} from 'http-status-codes';
+import { MiddlewareInterface } from '../../types/middleware.interface.js';
 import { DocumentExistsInterface } from '../../types/document-exists.type.js';
 import { ErrorMessage } from '../../types/enum/error-message.enum.js';
 import { ErrorDetails } from '../../types/enum/error-conroller.enum.js';

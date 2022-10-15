@@ -1,6 +1,7 @@
 import { Expose, Type } from 'class-transformer';
+
 import { ParamName } from '../../types/enum/param-name.enum.js';
-import UserResponse from '../user/user.response.js';
+import UserResponse from '../user/response/user.response.js';
 
 export default class ReviewResponse {
   @Expose()

@@ -1,5 +1,5 @@
-import {inject, injectable} from 'inversify';
-import {DocumentType, types} from '@typegoose/typegoose';
+import { inject, injectable } from 'inversify';
+import { DocumentType, types } from '@typegoose/typegoose';
 
 import CreateReviewDTO from './dto/create-review.dto.js';
 import { Component } from '../../types/component.types.js';
@@ -17,17 +17,16 @@ export default class ReviewService implements ReviewServiceInterface {
   ) {}
 
   public async create(dto: CreateReviewDTO): Promise<DocumentType<ReviewEntity>> {
-    const result = await this.reviewModel.create(dto);
+    const review = await this.reviewModel.create(dto);
 
     this.logger.info(`${InfoMessage.CommentCreated} ${dto.comment}`);
 
-    return result;
+    return review.populate([ParamName.UserID, ParamName.MovieID]);
   }
 
   public async findByMovieID(movieID: string): Promise<DocumentType<ReviewEntity>[]> {
     return this.reviewModel
       .find({movieID: movieID})
-      .populate([ParamName.MovieID, ParamName.UserID])
-      .exec();
+      .populate([ParamName.MovieID, ParamName.UserID]);
   }
 }

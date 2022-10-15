@@ -40,25 +40,15 @@ export default class MovieService implements MovieServiceInterface {
             from: CollectionName.Reviews,
             pipeline: [
               { $match: {movieID: '$_id'}},
-              { $project: { _id: 1 }}
-            ],
-            as: 'reviews'
-          },
-        },
-        {
-          $lookup: {
-            from: CollectionName.Reviews,
-            pipeline: [
-              { $match: {movieID: '$_id'}},
               { $project:{ rating: 1 }}
             ],
             as: 'ratings'
           }
         },
         { $addFields:
-          { id: { $toString: '$_id'}, reviewCount: { $size: '$reviews'}, rating: { $avg: '$ratings'}}
+          { id: { $toString: '$_id'}, reviewCount: { $size: '$ratings'}, rating: { $avg: '$ratings'}}
         },
-        { $unset: ['reviews, ratings']},
+        { $unset: ['ratings']},
       ])
       .exec();
   }
@@ -102,5 +92,14 @@ export default class MovieService implements MovieServiceInterface {
       .findByIdAndUpdate(movieID, {'$inc': {
         reviewCount: 1,
       }}).exec();
+  }
+
+  public async updateRating(movieID: string, newRating: number): Promise<DocumentType<MovieEntity, types.BeAnObject> | null> {
+    const movie = await this.findByID(movieID);
+
+    return this.movieModel
+      .findByIdAndUpdate(movieID, {
+        rating: {'$avg': [movie?.rating, newRating]},
+      }).exec();
   }
 }

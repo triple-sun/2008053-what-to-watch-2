@@ -1,6 +1,7 @@
 import {Expose, Type} from 'class-transformer';
-import { ParamName } from '../../types/enum/param-name.enum.js';
-import MovieResponse from '../movie/movie.response.js';
+
+import MovieResponse from '../../movie/movie.response.js';
+import { ParamName } from '../../../types/enum/param-name.enum.js';
 
 export default class UserResponse {
   @Expose()
