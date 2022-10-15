@@ -32,9 +32,19 @@ export default class MovieService implements MovieServiceInterface {
       .exists({_id: documentId})) !== null;
   }
 
-  public async find(): Promise<DocumentType<MovieEntity>[]> {
+  public async find(userID?: string): Promise<DocumentType<MovieEntity>[]> {
     return this.movieModel
       .aggregate([
+        {
+          $lookup: {
+            from: CollectionName.Users,
+            pipeline: [
+              { $match: {'$_id': userID}},
+              { $project:{ favorites: 1 }}
+            ],
+            as: 'favorites'
+          }
+        },
         {
           $lookup: {
             from: CollectionName.Reviews,
@@ -46,9 +56,21 @@ export default class MovieService implements MovieServiceInterface {
           }
         },
         { $addFields:
-          { id: { $toString: '$_id'}, reviewCount: { $size: '$ratings'}, rating: { $avg: '$ratings'}}
+          {
+            id: { $toString: '$_id'},
+            reviewCount: { $size: '$ratings'},
+            rating: { $avg: '$ratings'},
+            isFavorite: userID
+              ? {
+                '$setIsSubset': [
+                  [{ '$toString': '$_id' }],
+                  'favorites'
+                ]
+              }
+              : false
+          }
         },
-        { $unset: ['ratings']},
+        { $unset: ['ratings', 'favorites']},
       ])
       .exec();
   }

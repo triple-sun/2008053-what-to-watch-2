@@ -93,7 +93,7 @@ export default class MovieController extends Controller {
   }
 
   public async index(_req: Request, res: Response): Promise<void> {
-    const movies = await this.movieService.find();
+    const movies = await this.movieService.find(_req.user.id);
 
     this.ok(res, fillDTO(MovieResponse, movies));
   }

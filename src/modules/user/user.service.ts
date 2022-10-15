@@ -37,12 +37,15 @@ export default class UserService implements UserServiceInterface {
   public async findByID(userID: string): Promise<DocumentType<UserEntity> | null> {
     return this.userModel
       .findById(userID)
-      .populate([ParamName.UserID])
+      .populate([ParamName.Favorites])
       .exec();
   }
 
   public async findByEmail(email: string): Promise<DocumentType<UserEntity> | null> {
-    return this.userModel.findOne({email});
+    return this.userModel
+      .findOne({email})
+      .populate([ParamName.Favorites])
+      .exec();
   }
 
   public async findOrCreate(dto: CreateUserDTO, salt: string): Promise<DocumentType<UserEntity>> {
@@ -65,7 +68,7 @@ export default class UserService implements UserServiceInterface {
   public async verifyUser(dto: LoginUserDTO, salt: string): Promise<DocumentType<UserEntity> | null> {
     const user = await this.findByEmail(dto.email);
 
-    if (! user) {
+    if (!user) {
       return null;
     }
 

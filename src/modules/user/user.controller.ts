@@ -7,7 +7,6 @@ import ConfigService from '../../common/config/config.service.js';
 import HttpError from '../../common/errors/http-error.js';
 import CreateUserDto from './dto/create-user.dto.js';
 import LoginUserDTO from './dto/login-user.dto.js';
-import UpdateUserDTO from './dto/update-user.dto.js';
 import UserResponse from './response/user.response.js';
 import LoggedUserResponse from './response/logged-user.response.js';
 import { Controller } from '../../common/controller/controller.js';
@@ -30,6 +29,7 @@ import { DocumentExistsMiddleware } from '../../common/middlewares/document-exis
 import { ModelName } from '../../types/enum/model-name.enum.js';
 import { JWT_ALGORITM } from '../../const/const.js';
 import { PrivateRouteMiddleware } from '../../common/middlewares/private-route.middleware.js';
+import UpdateUserDTO from './dto/update-user.dto.js';
 
 @injectable()
 export default class UserController extends Controller {
@@ -79,6 +79,16 @@ export default class UserController extends Controller {
         new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware(ParamName.UserID),
         new UploadFileMiddleware(this.configService.get(Env.Upload), ParamName.Avatar),
+      ]
+    });
+
+    this.addRoute({
+      path: `${Path.UserID}`,
+      method: HttpMethod.Post,
+      handler: this.update,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware(ParamName.UserID),
       ]
     });
   }
@@ -157,6 +167,8 @@ export default class UserController extends Controller {
     this.created(res, {
       filepath: req.file?.path
     });
+
+    await this.update(req, res);
   }
 
   public async update(
