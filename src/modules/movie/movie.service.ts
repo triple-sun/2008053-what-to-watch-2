@@ -32,18 +32,18 @@ export default class MovieService implements MovieServiceInterface {
       .exists({_id: documentId})) !== null;
   }
 
-  public async find(): Promise<DocumentType<MovieEntity>[]> {
+  public async find(userID?: string): Promise<DocumentType<MovieEntity>[]> {
     return this.movieModel
       .aggregate([
         {
           $lookup: {
-            from: CollectionName.Reviews,
+            from: CollectionName.Users,
             pipeline: [
-              { $match: {movieID: '$_id'}},
-              { $project: { _id: 1 }}
+              { $match: {'$_id': userID}},
+              { $project:{ favorites: 1 }}
             ],
-            as: 'reviews'
-          },
+            as: 'favorites'
+          }
         },
         {
           $lookup: {
@@ -56,9 +56,21 @@ export default class MovieService implements MovieServiceInterface {
           }
         },
         { $addFields:
-          { id: { $toString: '$_id'}, reviewCount: { $size: '$reviews'}, rating: { $avg: '$ratings'}}
+          {
+            id: { $toString: '$_id'},
+            reviewCount: { $size: '$ratings'},
+            rating: { $avg: '$ratings'},
+            isFavorite: userID
+              ? {
+                '$setIsSubset': [
+                  [{ '$toString': '$_id' }],
+                  'favorites'
+                ]
+              }
+              : false
+          }
         },
-        { $unset: ['reviews, ratings']},
+        { $unset: ['ratings', 'favorites']},
       ])
       .exec();
   }
@@ -102,5 +114,14 @@ export default class MovieService implements MovieServiceInterface {
       .findByIdAndUpdate(movieID, {'$inc': {
         reviewCount: 1,
       }}).exec();
+  }
+
+  public async updateRating(movieID: string, newRating: number): Promise<DocumentType<MovieEntity, types.BeAnObject> | null> {
+    const movie = await this.findByID(movieID);
+
+    return this.movieModel
+      .findByIdAndUpdate(movieID, {
+        rating: {'$avg': [movie?.rating, newRating]},
+      }).exec();
   }
 }

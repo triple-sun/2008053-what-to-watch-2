@@ -1,7 +1,7 @@
-import {DocumentType} from '@typegoose/typegoose';
+import { DocumentType } from '@typegoose/typegoose';
 
-import { ReviewEntity } from './review.entity.js';
 import CreateReviewDTO from './dto/create-review.dto.js';
+import { ReviewEntity } from './review.entity.js';
 
 export interface ReviewServiceInterface {
   create(dto: CreateReviewDTO): Promise<DocumentType<ReviewEntity>>;

@@ -1,7 +1,9 @@
 export enum ErrorDetails {
+  Authenticate = 'AuthenthicateMiddleware',
   MovieController = 'MovieController',
   ReviewController = 'ReviewController',
   UserController = 'UserController',
   ValidateObjectID = 'ValidateObjectIDMiddleware',
-  DocumentExists = 'DocumentExistsMiddleware'
+  DocumentExists = 'DocumentExistsMiddleware',
+  PrivateRoute = 'PrivateRouteMiddleware',
 }

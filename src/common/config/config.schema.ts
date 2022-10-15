@@ -12,6 +12,7 @@ export type ConfigSchema = {
   PORT: number;
   SALT: string;
   UPLOAD: string;
+  JWT_SECRET: string,
   DB_HOST: string;
   DB_PORT: number;
   DB_USER: string;
@@ -43,6 +44,12 @@ export const configSchema = convict<ConfigSchema>({
     format: Format.IP,
     env: Env.DBHost,
     default: DB_HOST_DEFAULT
+  },
+  JWT_SECRET: {
+    doc: Doc.JWTSecret,
+    format: String,
+    env: Env.JWTSecret,
+    default: null
   },
   DB_PORT: {
     doc: Doc.DBPort,

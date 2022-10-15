@@ -15,7 +15,6 @@ export default class CreateReviewDTO {
   @Max(MinMax.RatingMax, {message: getMaxMessage(MinMax.RatingMax, FieldName.ReviewRating)})
   public rating!: number;
 
-  @IsMongoId({message: ErrorMessage.ID})
   public userID!: string;
 
   @IsMongoId({message: ErrorMessage.ID})

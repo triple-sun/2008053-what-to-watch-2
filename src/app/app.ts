@@ -12,6 +12,7 @@ import { Env } from '../types/enum/env.enum.js';
 import { ControllerInterface } from '../common/controller/controller.interface.js';
 import { Path } from '../types/enum/path.enum.js';
 import { ExceptionFilterInterface } from '../common/errors/exception-filter.interface.js';
+import { AuthenticateMiddleware } from '../common/middlewares/authenthicate.middleware.js';
 
 @injectable()
 export default class App {
@@ -37,10 +38,10 @@ export default class App {
 
   public initMiddleware() {
     this.expressApp.use(express.json());
-    this.expressApp.use(
-      Path.Upload,
-      express.static(this.config.get(Env.Upload))
-    );
+    this.expressApp.use(Path.Upload, express.static(this.config.get(Env.Upload)));
+
+    const authenticateMiddleware = new AuthenticateMiddleware(this.config.get(Env.JWTSecret));
+    this.expressApp.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
   }
 
   public initExceptionFilters() {

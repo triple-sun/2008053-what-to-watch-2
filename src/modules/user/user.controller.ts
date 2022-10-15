@@ -3,30 +3,33 @@ import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import { StatusCodes } from 'http-status-codes';
 
-import {Controller} from '../../common/controller/controller.js';
-import {Component} from '../../types/component.types.js';
-import {LoggerInterface} from '../../common/logger/logger.interface.js';
+import ConfigService from '../../common/config/config.service.js';
+import HttpError from '../../common/errors/http-error.js';
 import CreateUserDto from './dto/create-user.dto.js';
+import LoginUserDTO from './dto/login-user.dto.js';
+import UserResponse from './response/user.response.js';
+import LoggedUserResponse from './response/logged-user.response.js';
+import { Controller } from '../../common/controller/controller.js';
+import { Component } from '../../types/component.types.js';
+import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { HttpMethod } from '../../types/enum/http-method.enum.js';
 import { InfoMessage } from '../../types/enum/info-message.enum.js';
 import { Path } from '../../types/enum/path.enum.js';
 import { UserServiceInterface } from './user-service.interface.js';
-import ConfigService from '../../common/config/config.service.js';
-import HttpError from '../../common/errors/http-error.js';
-import { fillDTO } from '../../utils/common.js';
-import UserResponse from './user.response.js';
+import { createJWT, fillDTO } from '../../utils/common.js';
 import { Env } from '../../types/enum/env.enum.js';
 import { ErrorMessage } from '../../types/enum/error-message.enum.js';
 import { ErrorDetails } from '../../types/enum/error-conroller.enum.js';
-import LoginUserDTO from './dto/login-user.dto.js';
 import { ValidateDTOMiddleware } from '../../common/middlewares/validate-dto.middleware.js';
 import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-object-id.middleware.js';
 import { UploadFileMiddleware } from '../../common/middlewares/upload-file.middleware.js';
 import { ParamsGetUser } from '../../types/params.types.js';
-import UpdateUserDTO from './dto/update-user.dto.js';
 import { ParamName } from '../../types/enum/param-name.enum.js';
 import { DocumentExistsMiddleware } from '../../common/middlewares/document-exists.middleware.js';
 import { ModelName } from '../../types/enum/model-name.enum.js';
+import { JWT_ALGORITM } from '../../const/const.js';
+import { PrivateRouteMiddleware } from '../../common/middlewares/private-route.middleware.js';
+import UpdateUserDTO from './dto/update-user.dto.js';
 
 @injectable()
 export default class UserController extends Controller {
@@ -63,12 +66,29 @@ export default class UserController extends Controller {
     });
 
     this.addRoute({
+      path: Path.Login,
+      method: HttpMethod.Get,
+      handler: this.checkAuthentication
+    });
+
+    this.addRoute({
       path: `${Path.UserID}${Path.Avatar}`,
       method: HttpMethod.Post,
       handler: this.uploadAvatar,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware(ParamName.UserID),
         new UploadFileMiddleware(this.configService.get(Env.Upload), ParamName.Avatar),
+      ]
+    });
+
+    this.addRoute({
+      path: `${Path.UserID}`,
+      method: HttpMethod.Post,
+      handler: this.update,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware(ParamName.UserID),
       ]
     });
   }
@@ -112,30 +132,43 @@ export default class UserController extends Controller {
 
   public async login(
     {body}: Request<Record<string, unknown>, Record<string, unknown>, LoginUserDTO>,
-    _res: Response,
-
+    res: Response,
   ): Promise<void> {
-    const existsUser = await this.userService.findByEmail(body.email);
+    const user = await this.userService.verifyUser(body, this.configService.get(Env.Salt));
 
-    if (!existsUser) {
+    if (! user) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
-        `${ErrorMessage.UserEmail} ${body.email} ${ErrorMessage.NotFound}`,
-        ErrorDetails.UserController,
+        ErrorMessage.Unauthorized,
+        ErrorDetails.UserController
       );
     }
 
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      ErrorMessage.NotImplemented,
-      ErrorDetails.UserController,
+    const token = await createJWT(
+      JWT_ALGORITM,
+      this.configService.get(Env.JWTSecret),
+      {
+        email: user.email,
+        id: user.id,
+        avatarUrl: user.avatarUrl,
+        favorites: user.favorites,
+      }
     );
+
+    this.ok(res, fillDTO(
+      LoggedUserResponse,
+      {
+        email: user.email,
+        token,
+      }));
   }
 
   public async uploadAvatar(req: Request, res: Response) {
     this.created(res, {
       filepath: req.file?.path
     });
+
+    await this.update(req, res);
   }
 
   public async update(
@@ -145,5 +178,11 @@ export default class UserController extends Controller {
     const updatedUser = await this.userService.updateByID(params.userID, body);
 
     this.ok(res, fillDTO(UserResponse, updatedUser));
+  }
+
+  public async checkAuthentication(req: Request, res: Response) {
+    const user = await this.userService.findByEmail(req.user.email);
+
+    this.ok(res, fillDTO(LoggedUserResponse, user));
   }
 }

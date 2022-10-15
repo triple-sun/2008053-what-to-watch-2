@@ -1,13 +1,14 @@
-import {inject, injectable} from 'inversify';
-import {DocumentType, types} from '@typegoose/typegoose';
+import { inject, injectable } from 'inversify';
+import { DocumentType, types } from '@typegoose/typegoose';
 
 import CreateUserDTO from './dto/create-user.dto.js';
+import UpdateUserDTO from './dto/update-user.dto.js';
+import LoginUserDTO from './dto/login-user.dto.js';
 import { UserServiceInterface } from './user-service.interface.js';
 import { UserEntity } from './user.entity.js';
 import { Component } from '../../types/component.types.js';
 import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { InfoMessage } from '../../types/enum/info-message.enum.js';
-import UpdateUserDTO from './dto/update-user.dto.js';
 import { ParamName } from '../../types/enum/param-name.enum.js';
 
 @injectable()
@@ -36,12 +37,15 @@ export default class UserService implements UserServiceInterface {
   public async findByID(userID: string): Promise<DocumentType<UserEntity> | null> {
     return this.userModel
       .findById(userID)
-      .populate([ParamName.UserID])
+      .populate([ParamName.Favorites])
       .exec();
   }
 
   public async findByEmail(email: string): Promise<DocumentType<UserEntity> | null> {
-    return this.userModel.findOne({email});
+    return this.userModel
+      .findOne({email})
+      .populate([ParamName.Favorites])
+      .exec();
   }
 
   public async findOrCreate(dto: CreateUserDTO, salt: string): Promise<DocumentType<UserEntity>> {
@@ -59,5 +63,19 @@ export default class UserService implements UserServiceInterface {
       .findByIdAndUpdate(userID, dto, {new: true})
       .populate([ParamName.Favorites])
       .exec();
+  }
+
+  public async verifyUser(dto: LoginUserDTO, salt: string): Promise<DocumentType<UserEntity> | null> {
+    const user = await this.findByEmail(dto.email);
+
+    if (!user) {
+      return null;
+    }
+
+    if (user.verifyPassword(dto.password, salt)) {
+      return user;
+    }
+
+    return null;
   }
 }

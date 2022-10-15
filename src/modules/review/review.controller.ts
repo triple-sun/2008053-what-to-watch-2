@@ -1,20 +1,22 @@
-import {inject, injectable} from 'inversify';
-import {Request, Response} from 'express';
-import {Controller} from '../../common/controller/controller.js';
-import {Component} from '../../types/component.types.js';
-import {LoggerInterface} from '../../common/logger/logger.interface.js';
+import { inject, injectable } from 'inversify';
+import { Request, Response } from 'express';
+
+import ReviewResponse from './review.response.js';
+import CreateReviewDTO from './dto/create-review.dto.js';
+import { Controller } from '../../common/controller/controller.js';
+import { Component } from '../../types/component.types.js';
+import { LoggerInterface} from '../../common/logger/logger.interface.js';
 import { InfoMessage } from '../../types/enum/info-message.enum.js';
 import { Path } from '../../types/enum/path.enum.js';
 import { ReviewServiceInterface } from './review-service.interface.js';
 import { HttpMethod } from '../../types/enum/http-method.enum.js';
 import { fillDTO } from '../../utils/common.js';
-import ReviewResponse from './review.response.js';
-import CreateReviewDTO from './dto/create-review.dto.js';
 import { ModelName } from '../../types/enum/model-name.enum.js';
 import { MovieServiceInterface } from '../movie/movie-service.interface.js';
 import { ValidateDTOMiddleware } from '../../common/middlewares/validate-dto.middleware.js';
 import { DocumentExistsMiddleware } from '../../common/middlewares/document-exists.middleware.js';
 import { ParamName } from '../../types/enum/param-name.enum.js';
+import { PrivateRouteMiddleware } from '../../common/middlewares/private-route.middleware.js';
 
 @injectable()
 export default class ReviewController extends Controller {
@@ -32,6 +34,7 @@ export default class ReviewController extends Controller {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateDTOMiddleware(CreateReviewDTO),
         new DocumentExistsMiddleware(this.movieService, ModelName.Movie, ParamName.MovieID),
       ]
@@ -39,12 +42,15 @@ export default class ReviewController extends Controller {
   }
 
   public async create(
-    {body}: Request<object, object, CreateReviewDTO>,
+    req: Request<object, object, CreateReviewDTO>,
     res: Response
   ): Promise<void> {
-    const review = await this.reviewService.create(body);
+    const {body} = req;
+
+    const review = await this.reviewService.create({...body, userID: req.user.id});
 
     await this.movieService.incReviewCount(body.movieID);
+    await this.movieService.updateRating(body.movieID, body.rating);
 
     this.created(res, fillDTO(ReviewResponse, review));
   }
