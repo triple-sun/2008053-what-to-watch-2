@@ -1,4 +1,4 @@
-import { MaxLength, MinLength, IsEmail, IsString, IsOptional } from 'class-validator';
+import { MaxLength, MinLength, IsEmail, IsString } from 'class-validator';
 import { ErrorMessage } from '../../../types/enum/error-message.enum.js';
 import { FieldName } from '../../../types/enum/field-name.enum.js';
 import { MinMax } from '../../../types/enum/min-max.enum.js';
@@ -9,11 +9,6 @@ export default class CreateUserDTO {
   @MinLength(MinMax.UserNameMin, {message: getMinMessage(MinMax.UserNameMin, FieldName.UserName)})
   @MaxLength(MinMax.UserNameMax, {message: getMaxMessage(MinMax.UserNameMax, FieldName.UserName)})
   public name!: string;
-
-  @IsOptional()
-  @IsString({message: ErrorMessage.Image})
-  @MinLength(MinMax.ImageFieldMin, {message: ErrorMessage.ImageLength})
-  public avatar?: string;
 
   @IsEmail({message: ErrorMessage.Email})
   public email!: string;

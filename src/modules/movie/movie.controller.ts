@@ -5,7 +5,7 @@ import { inject, injectable } from 'inversify';
 
 import CreateMovieDTO from './dto/create-movie.dto.js';
 import UpdateMovieDTO from './dto/update-movie.dto.js';
-import MovieResponse from './movie.response.js';
+import MovieResponse from './response/movie.response.js';
 import ReviewResponse from '../review/review.response.js';
 import { Controller } from '../../common/controller/controller.js';
 import { Component } from '../../types/component.types.js';
@@ -13,7 +13,7 @@ import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { HttpMethod } from '../../types/enum/http-method.enum.js';
 import { InfoMessage } from '../../types/enum/info-message.enum.js';
 import { MovieServiceInterface } from './movie-service.interface.js';
-import { fillDTO } from '../../utils/common.js';
+import { filesToDTO, fillDTO } from '../../utils/common.js';
 import { Path } from '../../types/enum/path.enum.js';
 import { ParamsGetMovie } from '../../types/params.types.js';
 import { ReviewServiceInterface } from '../review/review-service.interface.js';
@@ -23,15 +23,21 @@ import { ValidateDTOMiddleware } from '../../common/middlewares/validate-dto.mid
 import { DocumentExistsMiddleware } from '../../common/middlewares/document-exists.middleware.js';
 import { ParamName } from '../../types/enum/param-name.enum.js';
 import { PrivateRouteMiddleware } from '../../common/middlewares/private-route.middleware.js';
+import { ConfigInterface } from '../../common/config/config.interface.js';
+import { Env } from '../../types/enum/env.enum.js';
+import { FILES_UPLOAD_FIELDS } from '../../const/const.js';
+import { UploadFilesMiddleware } from '../../common/middlewares/upload-files.middleware.js';
+import UploadMovieFilesResponse from './response/upload-movie-files.response.js';
 
 @injectable()
 export default class MovieController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
+    @inject(Component.ConfigInterface) configInterface: ConfigInterface,
     @inject(Component.MovieServiceInterface) private readonly movieService: MovieServiceInterface,
     @inject(Component.MovieServiceInterface) private readonly reviewService: ReviewServiceInterface,
   ) {
-    super(logger);
+    super(logger, configInterface);
 
     this.logger.info(InfoMessage.MovieController);
 
@@ -90,10 +96,25 @@ export default class MovieController extends Controller {
         new DocumentExistsMiddleware(this.movieService, ModelName.Movie, ParamName.MovieID)
       ]
     });
+
+    this.addRoute({
+      path: `${Path.MovieID}${Path.Upload}`,
+      method: HttpMethod.Post,
+      handler: this.uploadFiles,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware(ParamName.MovieID),
+        new UploadFilesMiddleware(this.configService.get(Env.Upload), FILES_UPLOAD_FIELDS),
+      ]
+    });
   }
 
-  public async index(_req: Request, res: Response): Promise<void> {
-    const movies = await this.movieService.find(_req.user.id);
+  public async index(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    const {user} = req;
+    const movies = await this.movieService.findByUserID(user.id);
 
     this.ok(res, fillDTO(MovieResponse, movies));
   }
@@ -143,5 +164,19 @@ export default class MovieController extends Controller {
     const reviews = await this.reviewService.findByMovieID(params.movieID);
 
     this.ok(res, fillDTO(ReviewResponse, reviews));
+  }
+
+  public async uploadFiles(req: Request<core.ParamsDictionary | ParamsGetMovie>, res: Response) {
+    const {params, files} = req;
+    const {movieID} = params;
+    const updateDTO = filesToDTO(files);
+
+    if (!updateDTO) {
+      return;
+    }
+
+    await this.movieService.updateByID(movieID, updateDTO);
+
+    this.created(res, fillDTO(UploadMovieFilesResponse, {...updateDTO}));
   }
 }

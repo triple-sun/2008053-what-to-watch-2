@@ -7,8 +7,6 @@ import { FieldName } from '../../../types/enum/field-name.enum.js';
 import { getMaxMessage, getMinMessage, getRequiredMessage } from '../../../utils/common.js';
 
 export default class UpdateMovieDTO {
-  public id!: string;
-
   @IsOptional()
   @MinLength(MinMax.MovieTitleMin, {message: getMinMessage(MinMax.MovieTitleMin, FieldName.MovieTitle)})
   @MaxLength(MinMax.MovieTitleMax, {message: getMaxMessage(MinMax.MovieTitleMax, FieldName.MovieTitle)})

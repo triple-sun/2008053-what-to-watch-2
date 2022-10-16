@@ -1,9 +1,12 @@
-import {Expose, Type} from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
-import MovieResponse from '../../movie/movie.response.js';
+import MovieResponse from '../../movie/response/movie.response.js';
 import { ParamName } from '../../../types/enum/param-name.enum.js';
 
 export default class UserResponse {
+  @Expose()
+  public id!: string;
+
   @Expose()
   public name!: string;
 
@@ -11,7 +14,7 @@ export default class UserResponse {
   public email!: string;
 
   @Expose()
-  public avatarUrl?: string;
+  public avatarUrl!: string;
 
   @Expose({ name: ParamName.Favorites })
   @Type(() => MovieResponse)

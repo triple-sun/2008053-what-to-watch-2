@@ -1,18 +1,21 @@
 import convict from 'convict';
 import validator from 'convict-format-with-validator';
 
-import { CONFIG_PORT_DEFAULT, DB_HOST_DEFAULT, DB_NAME_DEFAULT, DB_PORT_DEFAULT } from '../../const/const.js';
+import { CONFIG_HOST_DEFAULT, CONFIG_PORT_DEFAULT, DB_HOST_DEFAULT, DB_NAME_DEFAULT, DB_PORT_DEFAULT } from '../../const/const.js';
 import { Doc } from '../../types/enum/doc.enum.js';
 import { Env } from '../../types/enum/env.enum.js';
 import { Format } from '../../types/enum/format.enum.js';
+import { Path } from '../../types/enum/path.enum.js';
 
 convict.addFormats(validator);
 
 export type ConfigSchema = {
+  HOST: string;
   PORT: number;
   SALT: string;
   UPLOAD: string;
-  JWT_SECRET: string,
+  STATIC: string;
+  JWT_SECRET: string;
   DB_HOST: string;
   DB_PORT: number;
   DB_USER: string;
@@ -21,6 +24,12 @@ export type ConfigSchema = {
 }
 
 export const configSchema = convict<ConfigSchema>({
+  HOST: {
+    doc: Doc.Host,
+    format: String,
+    env: Env.Host,
+    default: CONFIG_HOST_DEFAULT
+  },
   PORT: {
     doc: Doc.Port,
     format: Format.Port,
@@ -38,6 +47,12 @@ export const configSchema = convict<ConfigSchema>({
     format: String,
     env: Env.Upload,
     default: null
+  },
+  STATIC: {
+    doc: Doc.Static,
+    format: String,
+    env: Env.Static,
+    default: Path.Static
   },
   DB_HOST: {
     doc: Doc.DBHost,

@@ -39,6 +39,8 @@ export class UserEntity extends defaultClasses.TimeStamps {
   public name!: string;
 
   @prop({
+    required: true,
+    trim: true,
     match: [/\.(jpe?g|png)$/i, ErrorMessage.AvatarUrl],
     })
   public avatarUrl!: string;

@@ -47,10 +47,16 @@ export class MovieEntity extends defaultClasses.TimeStamps {
   @prop({required: true, default: MinMax.RatingMin})
   public rating!: number;
 
-  @prop({required: true})
+  @prop({
+    default: '',
+    required: true
+    })
   public previewVideoLink!: string;
 
-  @prop({required: true})
+  @prop({
+    default: '',
+    required: true
+    })
   public videoLink!: string;
 
   @prop({required: true})
@@ -76,6 +82,7 @@ export class MovieEntity extends defaultClasses.TimeStamps {
   public userID!: Ref<UserEntity>;
 
   @prop({
+    default: '',
     required: true,
     match: [/\.(jpe?g)$/i,
     ErrorMessage.MovieImgUrl]
@@ -83,6 +90,7 @@ export class MovieEntity extends defaultClasses.TimeStamps {
   public posterImage!: string;
 
   @prop({
+    default: '',
     required: true,
     match: [/\.(jpe?g)$/i,
     ErrorMessage.MovieImgUrl]
