@@ -23,5 +23,6 @@ export enum ErrorMessage {
   Forbidden = 'You are not authorized or do not have permission to this page',
   ObjectID = 'is invalid ObjectID',
   Unauthorized = 'Unauthorized',
-  Token = 'Invalid token'
+  Token = 'Invalid token',
+  Validation = 'Validation error:'
 }

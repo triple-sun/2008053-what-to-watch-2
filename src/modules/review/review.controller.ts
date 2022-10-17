@@ -17,15 +17,17 @@ import { ValidateDTOMiddleware } from '../../common/middlewares/validate-dto.mid
 import { DocumentExistsMiddleware } from '../../common/middlewares/document-exists.middleware.js';
 import { ParamName } from '../../types/enum/param-name.enum.js';
 import { PrivateRouteMiddleware } from '../../common/middlewares/private-route.middleware.js';
+import { ConfigInterface } from '../../common/config/config.interface.js';
 
 @injectable()
 export default class ReviewController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
+    @inject(Component.ConfigInterface) configService: ConfigInterface,
     @inject(Component.MovieServiceInterface) private readonly movieService: MovieServiceInterface,
     @inject(Component.MovieServiceInterface) private readonly reviewService: ReviewServiceInterface,
   ) {
-    super(logger);
+    super(logger, configService);
 
     this.logger.info(InfoMessage.ReviewController);
 
@@ -45,9 +47,9 @@ export default class ReviewController extends Controller {
     req: Request<object, object, CreateReviewDTO>,
     res: Response
   ): Promise<void> {
-    const {body} = req;
+    const {body, user} = req;
 
-    const review = await this.reviewService.create({...body, userID: req.user.id});
+    const review = await this.reviewService.create({...body, userID: user.id});
 
     await this.movieService.incReviewCount(body.movieID);
     await this.movieService.updateRating(body.movieID, body.rating);

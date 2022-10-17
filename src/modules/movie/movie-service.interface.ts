@@ -8,7 +8,7 @@ import { MovieEntity } from './movie.entity.js';
 export interface MovieServiceInterface {
   create(dto: CreateMovieDTO): Promise<DocumentType<MovieEntity>>;
   exists(documentId: string): Promise<boolean>;
-  find(userID?: string): Promise<DocumentType<MovieEntity>[]>;
+  findByUserID(userID?: string): Promise<DocumentType<MovieEntity>[]>;
   findByGenre(genre: Genre): Promise<DocumentType<MovieEntity>[]>;
   findByTitle(title: string): Promise<DocumentType<MovieEntity> | null>;
   findByID(movieID: string): Promise<DocumentType<MovieEntity> | null>;

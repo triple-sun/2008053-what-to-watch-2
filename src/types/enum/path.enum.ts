@@ -9,6 +9,7 @@ export enum Path {
   Promo = '/promo',
   Register = '/register',
   Reviews = '/reviews',
+  Static = '/static',
   Upload = '/upload',
   UserID = '/:userID',
   Users = '/users',

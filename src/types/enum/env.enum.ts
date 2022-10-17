@@ -1,7 +1,9 @@
 export enum Env {
+  Host = 'HOST',
   Port = 'PORT',
   Salt = 'SALT',
   Upload = 'UPLOAD',
+  Static = 'STATIC',
   JWTSecret = 'JWT_SECRET',
   DBHost = 'DB_HOST',
   DBPort = 'DB_PORT',

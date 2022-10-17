@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
 import { nanoid } from 'nanoid';
-import multer, {diskStorage} from 'multer';
+import multer, {diskStorage, Field} from 'multer';
 import mime from 'mime-types';
 
 import { MiddlewareInterface } from '../../types/middleware.interface.js';
 
-export class UploadFileMiddleware implements MiddlewareInterface {
+export class UploadFilesMiddleware implements MiddlewareInterface {
   constructor(
     private uploadDirectory: string,
-    private fieldName: string,
+    private fields: Field[],
   ) {}
 
   public async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -21,9 +21,8 @@ export class UploadFileMiddleware implements MiddlewareInterface {
       }
     });
 
-    const uploadSingleFileMiddleware = multer({storage})
-      .single(this.fieldName);
+    const uploadFilesMiddleware = multer({storage}).fields(this.fields);
 
-    uploadSingleFileMiddleware(req, res, next);
+    uploadFilesMiddleware(req, res, next);
   }
 }

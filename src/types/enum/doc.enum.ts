@@ -1,8 +1,10 @@
 export enum Doc {
+  Host = 'Service host',
   Port = 'Port for incoming connections',
   Salt = 'Salt for password hash',
   Upload = 'Directory for uploaded files',
-  JWTSecret = 'Secret for siging JWT',
+  Static = 'Directory for static resources',
+  JWTSecret = 'Secret for signing JWT',
   DBHost = 'Database(MongoDB) host',
   DBPort = 'Database(MongoDB) port',
   DBUser = 'Database(MongoDB) username',

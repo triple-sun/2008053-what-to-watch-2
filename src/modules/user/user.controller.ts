@@ -22,7 +22,7 @@ import { ErrorMessage } from '../../types/enum/error-message.enum.js';
 import { ErrorDetails } from '../../types/enum/error-conroller.enum.js';
 import { ValidateDTOMiddleware } from '../../common/middlewares/validate-dto.middleware.js';
 import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-object-id.middleware.js';
-import { UploadFileMiddleware } from '../../common/middlewares/upload-file.middleware.js';
+import { UploadSingleFileMiddleware } from '../../common/middlewares/upload-single-file.middleware.js';
 import { ParamsGetUser } from '../../types/params.types.js';
 import { ParamName } from '../../types/enum/param-name.enum.js';
 import { DocumentExistsMiddleware } from '../../common/middlewares/document-exists.middleware.js';
@@ -30,15 +30,17 @@ import { ModelName } from '../../types/enum/model-name.enum.js';
 import { JWT_ALGORITM } from '../../const/const.js';
 import { PrivateRouteMiddleware } from '../../common/middlewares/private-route.middleware.js';
 import UpdateUserDTO from './dto/update-user.dto.js';
+import UploadUserAvatarResponse from './response/upload-user-avatar.response.js';
 
 @injectable()
 export default class UserController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
+    @inject(Component.ConfigInterface) configService: ConfigService,
     @inject(Component.UserServiceInterface) private readonly userService: UserServiceInterface,
-    @inject(Component.ConfigInterface) private readonly configService: ConfigService,
   ) {
-    super(logger);
+    super(logger, configService);
+
     this.logger.info(InfoMessage.UserController);
 
     this.addRoute({
@@ -78,7 +80,7 @@ export default class UserController extends Controller {
       middlewares: [
         new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware(ParamName.UserID),
-        new UploadFileMiddleware(this.configService.get(Env.Upload), ParamName.Avatar),
+        new UploadSingleFileMiddleware(this.configService.get(Env.Upload), ParamName.Avatar),
       ]
     });
 
@@ -155,20 +157,18 @@ export default class UserController extends Controller {
       }
     );
 
-    this.ok(res, fillDTO(
-      LoggedUserResponse,
-      {
-        email: user.email,
-        token,
-      }));
+    this.ok(res, {
+      ...fillDTO(LoggedUserResponse, user),
+      token
+    });
   }
 
   public async uploadAvatar(req: Request, res: Response) {
-    this.created(res, {
-      filepath: req.file?.path
-    });
+    const avatar = {avatarUrl: req.file?.path};
 
-    await this.update(req, res);
+    await this.userService.updateByID(req.params.userID, avatar);
+
+    this.created(res, fillDTO(UploadUserAvatarResponse, avatar));
   }
 
   public async update(
@@ -181,6 +181,14 @@ export default class UserController extends Controller {
   }
 
   public async checkAuthentication(req: Request, res: Response) {
+    if (! req.user) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        ErrorMessage.Unauthorized,
+        ErrorDetails.UserController
+      );
+    }
+
     const user = await this.userService.findByEmail(req.user.email);
 
     this.ok(res, fillDTO(LoggedUserResponse, user));

@@ -22,6 +22,7 @@ export default class MovieService implements MovieServiceInterface {
 
   public async create(dto: CreateMovieDTO): Promise<DocumentType<MovieEntity>> {
     const result = await this.movieModel.create(dto);
+
     this.logger.info(`${InfoMessage.MovieCreated} ${dto.title}`);
 
     return result;
@@ -32,7 +33,7 @@ export default class MovieService implements MovieServiceInterface {
       .exists({_id: documentId})) !== null;
   }
 
-  public async find(userID?: string): Promise<DocumentType<MovieEntity>[]> {
+  public async findByUserID(userID?: string): Promise<DocumentType<MovieEntity>[]> {
     return this.movieModel
       .aggregate([
         {
@@ -113,7 +114,8 @@ export default class MovieService implements MovieServiceInterface {
     return this.movieModel
       .findByIdAndUpdate(movieID, {'$inc': {
         reviewCount: 1,
-      }}).exec();
+      }})
+      .exec();
   }
 
   public async updateRating(movieID: string, newRating: number): Promise<DocumentType<MovieEntity, types.BeAnObject> | null> {
@@ -122,6 +124,7 @@ export default class MovieService implements MovieServiceInterface {
     return this.movieModel
       .findByIdAndUpdate(movieID, {
         rating: {'$avg': [movie?.rating, newRating]},
-      }).exec();
+      })
+      .exec();
   }
 }

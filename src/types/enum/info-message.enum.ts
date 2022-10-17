@@ -12,7 +12,7 @@ export enum InfoMessage {
   CommentCreated = 'New comment created:',
   MovieCreated = 'New movie created:',
   UserCreated = 'New user created:',
-  ServerStarted = 'Server started on http://localhost:',
+  ServerStarted = 'Server started on',
   MovieController = 'Registering routes for MovieController…',
   ReviewController = 'Registering routes for ReviewController…',
   UserController = 'Registering routes for UserController…'
